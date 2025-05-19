@@ -1,0 +1,67 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Philippe Serhal — Software Engineer",
+  description = "Philippe Serhal is an experienced Software Engineer. He makes computers solve problems.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script
+      is:inline
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-BY32L2RV30"></script>
+    <script>
+      // @ts-expect-error Using GA snippet as-is
+      window.dataLayer = window.dataLayer || [];
+      function gtag(...args: unknown[]) {
+        // @ts-expect-error Using GA snippet as-is
+        window.dataLayer.push(args);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-BY32L2RV30");
+    </script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <meta name="author" content="Philippe Serhal" />
+    <link rel="canonical" href={Astro.url} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <!-- TODO(serhalp): Add an `og:image` -->
+  </head>
+  <body>
+    <div id="root"><slot /></div>
+  </body>
+</html>
+
+<style>
+  html,
+  body {
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+  }
+</style>
