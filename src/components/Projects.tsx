@@ -77,7 +77,7 @@ const projectsData = [
     title: "beerlist.it",
     description:
       "(old!) Fetch the BeerAdvocate ratings for all the beers listed on a webpage",
-    tags: ["Python", "Django", "Bioinformatics"],
+    tags: ["Python", "Django"],
     links: {
       github: "https://github.com/serhalp/beerlist.it",
       live: null,
