@@ -2,9 +2,6 @@ name: Dependency Diff
 
 on:
   pull_request:
-    paths:
-      - "package.json"
-      - "pnpm-lock.yaml"
 
 permissions:
   contents: read
@@ -14,5 +11,9 @@ jobs:
   dependency-diff:
     runs-on: ubuntu-latest
     steps:
-      - name: Dependency Diff
-        uses: actions/dependency-review-action@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Create Diff
+        uses: e18e/action-dependency-diff@v1
