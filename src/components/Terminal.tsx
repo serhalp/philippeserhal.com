@@ -1,8 +1,9 @@
-import { type ReactNode, type FormEvent, useState, useRef } from "react";
+import type { ComponentChildren } from "preact";
+import { useRef, useState } from "preact/hooks";
 
 interface TerminalProps {
   command?: string;
-  output?: ReactNode;
+  output?: ComponentChildren;
   title?: string;
   prompt?: string;
   className?: string;
@@ -34,7 +35,7 @@ const Terminal = ({
     }
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = (e: Event) => {
     e.preventDefault();
     if (onCommand && inputValue.trim()) {
       onCommand(inputValue);
@@ -66,11 +67,11 @@ const Terminal = ({
               type="text"
               name={inputName}
               value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              onChange={(e) => setInputValue(e.currentTarget.value)}
               placeholder={inputPlaceholder}
               className="bg-transparent border-none outline-none text-foreground w-full font-mono"
               autoComplete="off"
-              spellCheck="false"
+              spellcheck={false}
             />
           </form>
         ) : showCursor ? (
