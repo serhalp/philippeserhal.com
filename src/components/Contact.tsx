@@ -1,26 +1,27 @@
-import { useRef, useState } from "preact/hooks";
+import { useSignal } from "@preact/signals";
+import { useRef } from "preact/hooks";
 import Terminal from "./Terminal";
 
 const Contact = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const name = useSignal("");
+  const email = useSignal("");
+  const message = useSignal("");
+  const isSubmitted = useSignal(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   // Explicit state indicators
-  const isEnteringName = !name;
-  const isEnteringEmail = name && !email;
-  const isEnteringMessage = name && email !== "";
+  const isEnteringName = !name.value;
+  const isEnteringEmail = !!name.value && !email.value;
+  const isEnteringMessage = !!name.value && email.value !== "";
 
   const handleCommand = (value: string) => {
     if (isEnteringName) {
-      setName(value);
+      name.value = value;
     } else if (isEnteringEmail) {
-      setEmail(value);
+      email.value = value;
     } else if (isEnteringMessage) {
-      setMessage(value);
-      setIsSubmitted(true);
+      message.value = value;
+      isSubmitted.value = true;
       // Submit the actual Netlify form
       if (formRef.current) {
         formRef.current.submit();
@@ -41,9 +42,9 @@ const Contact = () => {
           className="hidden"
         >
           <input type="hidden" name="form-name" value="contact" />
-          <input type="text" name="name" value={name} readOnly />
-          <input type="email" name="email" value={email} readOnly />
-          <input type="text" name="message" value={message} readOnly />
+          <input type="text" name="name" value={name.value} readOnly />
+          <input type="email" name="email" value={email.value} readOnly />
+          <input type="text" name="message" value={message.value} readOnly />
         </form>
 
         <Terminal
@@ -54,23 +55,23 @@ const Contact = () => {
               <p>Connected.</p>
               <br />
               <p>Enter your name:</p>
-              {name ? <p>{name}</p> : null}
+              {name.value ? <p>{name.value}</p> : null}
 
               {!isEnteringName && (
                 <>
                   <p>Enter your email (optional):</p>
-                  {email ? <p>{email}</p> : null}
+                  {email.value ? <p>{email.value}</p> : null}
                 </>
               )}
 
               {!isEnteringName && !isEnteringEmail && (
                 <>
                   <p>Enter your message:</p>
-                  {message ? <p>{message}</p> : null}
+                  {message.value ? <p>{message.value}</p> : null}
                 </>
               )}
 
-              {isSubmitted && (
+              {isSubmitted.value && (
                 <>
                   <p>Mail delivered to Philippe Serhal.</p>
                 </>
@@ -81,7 +82,7 @@ const Contact = () => {
             isEnteringName ? "name" : isEnteringEmail ? "email" : "message"
           }
           inputPlaceholder=""
-          isInput={!isSubmitted}
+          isInput={!isSubmitted.value}
           onCommand={handleCommand}
         />
       </div>

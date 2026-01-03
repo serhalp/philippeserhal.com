@@ -21,7 +21,7 @@
 
 ## Coding Style & Naming Conventions
 
-- TypeScript strict; Preact components use JSX runtime (`tsx`). Follow Prettier defaults (2-space indent, semicolons); avoid manual style tweaks and run `pnpm format` before pushing.
+- TypeScript strict; Preact components use JSX runtime (`tsx`) and state via `@preact/signals` (avoid React-like `useState`). Follow Prettier defaults (2-space indent, semicolons); avoid manual style tweaks and run `pnpm format` before pushing.
 - ESLint enforces Astro, Preact, accessibility, and TypeScript rules; keep JSX free of unused imports and a11y violations.
 - Components: PascalCase filenames/exports; hooks/utilities (if added) should be camelCase. Routes under `src/pages` should mirror URL slugs (lowercase, hyphenated when multi-word).
 - Use Tailwind utilities for layout/spacing; keep bespoke CSS in `global.css` and prefer theme tokens from `tailwind.config.ts`.

@@ -1,4 +1,4 @@
-import { useState } from "preact/hooks";
+import { useSignal } from "@preact/signals";
 
 const experienceData = [
   {
@@ -79,7 +79,7 @@ const experienceData = [
 ];
 
 const Experience = () => {
-  const [activeTab, setActiveTab] = useState(0);
+  const activeTab = useSignal(0);
 
   return (
     <section id="experience" className="pb-8 bg-secondary/20">
@@ -91,9 +91,11 @@ const Experience = () => {
             {experienceData.map((job, index) => (
               <button
                 key={index}
-                onClick={() => setActiveTab(index)}
+                onClick={() => {
+                  activeTab.value = index;
+                }}
                 className={`px-4 py-3 border-b-2 md:border-l-2 md:border-b-0 border-muted hover:bg-secondary/50 transition-all text-left whitespace-nowrap ${
-                  activeTab === index
+                  activeTab.value === index
                     ? "text-primary border-primary bg-secondary/30"
                     : "text-muted-foreground"
                 }`}
@@ -107,22 +109,24 @@ const Experience = () => {
           </div>
 
           <div className="md:w-3/4 mr-32">
-            {experienceData[activeTab] && (
+            {experienceData[activeTab.value] && (
               <div className="animate-fade-in">
                 <h3 className="text-xl font-bold pb-2">
-                  {experienceData[activeTab].title}{" "}
+                  {experienceData[activeTab.value].title}{" "}
                   <span className="text-primary">
-                    @ {experienceData[activeTab].company}
+                    @ {experienceData[activeTab.value].company}
                   </span>
                 </h3>
 
                 <ul className="space-y-2">
-                  {experienceData[activeTab].responsibilities.map((item, i) => (
-                    <li key={i} className="flex">
-                      <span className="text-primary mr-2 mt-1">▹</span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
+                  {experienceData[activeTab.value].responsibilities.map(
+                    (item, i) => (
+                      <li key={i} className="flex">
+                        <span className="text-primary mr-2 mt-1">▹</span>
+                        <span>{item}</span>
+                      </li>
+                    ),
+                  )}
                 </ul>
               </div>
             )}
