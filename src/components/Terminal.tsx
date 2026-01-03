@@ -1,8 +1,10 @@
-import { type ReactNode, type FormEvent, useState, useRef } from "react";
+import type { ComponentChildren } from "preact";
+import { useSignal } from "@preact/signals";
+import { useRef } from "preact/hooks";
 
 interface TerminalProps {
   command?: string;
-  output?: ReactNode;
+  output?: ComponentChildren;
   title?: string;
   prompt?: string;
   className?: string;
@@ -25,7 +27,7 @@ const Terminal = ({
   inputName,
   inputPlaceholder = "",
 }: TerminalProps) => {
-  const [inputValue, setInputValue] = useState("");
+  const inputValue = useSignal("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   const focusInput = () => {
@@ -34,11 +36,11 @@ const Terminal = ({
     }
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = (e: Event) => {
     e.preventDefault();
-    if (onCommand && inputValue.trim()) {
-      onCommand(inputValue);
-      setInputValue("");
+    if (onCommand && inputValue.value.trim()) {
+      onCommand(inputValue.value);
+      inputValue.value = "";
     }
   };
 
@@ -65,12 +67,15 @@ const Terminal = ({
               ref={inputRef}
               type="text"
               name={inputName}
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              value={inputValue.value}
+              onInput={(e) => {
+                const target = e.currentTarget as HTMLInputElement;
+                inputValue.value = target.value;
+              }}
               placeholder={inputPlaceholder}
               className="bg-transparent border-none outline-none text-foreground w-full font-mono"
               autoComplete="off"
-              spellCheck="false"
+              spellcheck={false}
             />
           </form>
         ) : showCursor ? (
