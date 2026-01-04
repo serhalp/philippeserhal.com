@@ -63,22 +63,11 @@ const imageUrl = image ? new URL(image, Astro.url) : null;
     <meta name="author" content="Philippe Serhal" />
     <link rel="canonical" href={Astro.url} />
 
-    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={Astro.url} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     {imageUrl && <meta property="og:image" content={imageUrl} />}
-
-    <!-- Twitter -->
-    <meta
-      property="twitter:card"
-      content={imageUrl ? "summary_large_image" : "summary"}
-    />
-    <meta property="twitter:url" content={Astro.url} />
-    <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={description} />
-    {imageUrl && <meta property="twitter:image" content={imageUrl} />}
   </head>
   <body>
     <div id="root"><slot /></div>
