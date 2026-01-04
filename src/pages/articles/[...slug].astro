@@ -29,6 +29,7 @@ const formatDate = (date: Date) => {
 <Layout
   title={`${entry.data.title} | Philippe Serhal`}
   description={entry.data.description}
+  image={entry.data.ogImage?.src}
 >
   <div class="bg-background text-foreground min-h-screen flex flex-col">
     <Header />
