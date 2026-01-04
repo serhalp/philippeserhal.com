@@ -1,0 +1,244 @@
+---
+title: "❝Every now and then I get a random Access Denied page...❞"
+pubDate: 2024-02-01
+description: "Nondeterminism, library bugs, race conditions, incorrect docs, a behaviour that shouldn't be possible, and an unbelievable twist."
+external:
+  url: "https://serhalp.substack.com/p/my-unbelievable-bug-story"
+  label: "Substack"
+---
+
+We received a bug report from one of our customer service associates (let’s call her Sarah) that went something like this:
+
+> When I’m using [internal customer service web app], every now and then I get this “Access Denied” page.
+
+I fire off some follow-up questions and start checking the usual suspects: Sarah’s user has the expected roles, her browser is supported and up to date, and so on.
+
+I open up our error tracking service, [Rollbar](https://rollbar.com/), and find some recent occurrences of HTTP 403 errors for Sarah in this app, coming from the backend service.
+
+It isn’t obvious why a 403 would be returned – according to Rollbar, Sarah’s authentication token is valid, her user has the expected roles, and the resources being accessed should be accessible to her.
+
+## Upon closer inspection
+
+I try to reproduce this locally. I spin up development instances of the backend and frontend, and click around. I load up similar pages. I log in as a user with the same privileges as Sarah. No errors.
+
+When I go back to Rollbar, something catches my eye:
+
+```json
+{
+  "firstName": "Sarah",
+  "lastName": "Lastname",
+  "email": "sarah.lastname@example.com",
+  "roles": ["customer_service", "manager"],
+  "tempWorker": "********"
+}
+```
+
+What’s this "\*\*\*\*\*\*\*\*" about? I vaguely recall having seen (and promptly ignored) this string in Rollbar details before, but I’d never thought much of it.
+
+It occurs to me at this point that `tempWorker` is a field involved in authorization and I’m trying to explain mysterious “access denied” errors. It certainly seems like a plausible connection. Is this just a red herring? Is this even worth pursuing?
+
+I check all the other 403 occurrences for Sarah: they all show "\*\*\*\*\*\*\*\*".
+
+I check occurrences of other, non-403 errors for Sarah: they all show `"tempWorker": false`.
+
+I check 403 occurrences for other users: they all show "\*\*\*\*\*\*\*\*" as well.
+
+In the meantime, Sarah has responded to my follow-up questions and let me know that “this happens randomly, rarely, to everyone” and they’ve learned to just “log out and back in and that usually fixes it.”
+
+It seems we’re on to something here. It seems unlikely, but all signs point to this `false` unexpectedly being "\*\*\*\*\*\*\*\*", rarely, and randomly, and this being either the cause of — or correlated with — the issue.
+
+Okay. Where do we go from here?
+
+## Auth overview
+
+I remind myself how authentication and authorization work in this Node.js service:
+
+1. Authenticated requests from the browser are sent with a user cookie, containing a signed JSON Web Token (JWT).
+2. When handling a request, the Express.js web server runs an auth middleware that decodes the JWT, verifies its signature and expiry, and populates a hydrated user session object (containing fields like email, roles, tempWorker, etc.) from the resulting payload as `req.user`.
+3. Before accessing a resource, downstream middlewares use values from `req.user` to check the user’s permissions against the resource. When a check fails, we return a 403.
+4. Finally, before sending the response, the auth middleware from step 2 checks if `req.user` has been changed. If so, it set a `Set-Cookie` response header so that the browser can store an updated JWT.
+
+Working backwards from this, I reasoned that if something were to overwrite `req.user.tempWorker` during the request handling lifecycle, the new value would be saved by the browser and sent to the server on subsequent requests. Sarah also reported that logging out and back in is the only workaround, which aligns with this hypothesis.
+
+> **💡 Insight #1:** In-memory corruption of the JWT payload may only be reflected on subsequent requests.
+
+Now, remember step 3 above? Ultimately, somewhere there’s a bit of code along the lines of:
+
+```javascript
+if (req.user.tempWorker) res.sendStatus(403);
+```
+
+Simply put, users who are “temp workers” can’t access anything in this app.
+
+Wait — let’s look at that again and fill in the value we’re seeing:
+
+```javascript
+if ("********") res.sendStatus(403);
+```
+
+In JavaScript, nonempty strings evaluate to true. I’ll spare you the embarrassing amount of time it took me to make that connection. This code and I were both expecting this field to always be a boolean.
+
+> **💡 Insight #2:** Any truthy value for `tempWorker` would result in a 403… and "\*\*\*\*\*\*\*\*" is truthy.
+
+## These \*\*\*\*\*\*\*\* asterisks
+
+Okay, we have a working theory. But where are these asterisks coming from?
+
+After clicking around in Rollbar, I see something like this and the answer is immediately obvious:
+
+```json
+{
+  "apiToken": "********"
+}
+```
+
+This is Rollbar’s mechanism for scrubbing sensitive information!
+
+What’s going on here? We still have two big mysteries to solve:
+
+1. Why would a field called `tempWorker` be scrubbed?
+2. Why would this cause issues in our app if scrubbing is a downstream transformation at the Rollbar reporting level?
+
+We’ve arrived at the most unbelievable part of the story. Pause here, and try to guess. (Good luck.)
+
+## The “tempWorker” mystery, solved
+
+Give up?
+
+The answer to the first question occurred to me suddenly, lying in bed later that day. The question needed to be reframed: What was special about the string "tempWorker" but not "email" or "roles" if you’re trying to scrub sensitive fields?
+
+tem**pW**orker
+
+**pw**
+
+Oh _no_.
+
+> **💡 Insight #3:** “pw” is a common abbreviation of “password”.
+
+Could Rollbar be checking, case-insensitively for the substring “pw” anywhere in a field name and scrubbing the corresponding value?
+
+This must not come up often. You don’t see “turnipwood” or “shipwright” very often in a JSON key.
+
+I checked the [rollbar.js documentation on scrubbing](https://github.com/rollbar/rollbar.js/blob/f0140a050c270981cfb980c9aa492a2d032fcb2f/README.md#context-1) and found this:
+
+> **scrubFields**
+> A list containing names of keys/fields/query parameters to scrub. Scrubbed fields will be normalized to all `*` before being reported to Rollbar. This is useful for sensitive information that you do not want to send to Rollbar. e.g. User tokens
+>
+> Default: `["passwd", "password", "secret", "confirm_password", "password_confirmation"]`
+
+Though this confirms the scrubbing happens in the Rollbar SDK (“client side”), “pw” was not listed and there’s no mention of substring matching. I almost abandoned this hypothesis at this point.
+
+Luckily, I decided to check the library’s source code for good measure and [there it was](https://github.com/rollbar/rollbar.js/blob/f0140a050c270981cfb980c9aa492a2d032fcb2f/package.json#L135-L161)… “pw” and 30 other undocumented patterns:
+
+```javascript
+"scrubFields": [
+  "pw",
+  "pass",
+  "passwd",
+  "password",
+  "password_confirmation",
+  /* .... */
+]
+```
+
+The docs were lying to me! What else might they be lying about? I pulled up the scrubbing code and found [this regular expression](https://github.com/rollbar/rollbar.js/blob/f0140a050c270981cfb980c9aa492a2d032fcb2f/src/utility.js#L550):
+
+```javascript
+new RegExp(
+  "\\\\[?(%5[bB])?" + scrubFields[i] + "\\\\[?(%5[bB])?\]?(%5[dD])?",
+  "i",
+);
+```
+
+Uhh. What? Let’s simplify this, using “pw” as an example:
+
+```javascript
+/\\\[?(%5b)?pw\\\\[?(%5b)?\]?(%5d)?/i
+```
+
+What are `%5b` and `%5c`? Let’s check with a browser console:
+
+```javascript
+> decodeURIComponent('%5b')
+"["
+> decodeURIComponent('%5d')
+"]"
+```
+
+OK, let’s break it down then:
+
+- `\\\[?` ← 0 or 1 left bracket
+- `(%5b)?` ← 0 or 1 encoded left bracket
+- **pw**
+- `\\\[?` ← 0 or 1 left bracket
+- `(%5b)?` ← 0 or 1 encoded left bracket
+- `\]?` ← 0 or 1 right bracket
+- `(%5d)?` ← 0 or 1 encoded right bracket
+
+Most of this appears to be attempting to capture the full field name, but these capture groups aren’t used… Let’s move on.
+
+The takeaway is that this matches strings that contain “pw” anywhere. This uncovers a second inaccuracy in the docs.
+
+## Narrowing in
+
+At this point, two mysteries remained:
+
+1. Why would the Rollbar reporting module’s scrubbing mechanism affect our application’s behaviour at all? Shouldn’t it only affect what ends up in Rollbar?
+2. Why does this bug occur, as Sarah described it, “randomly”?
+
+It turns out these questions are related.
+
+Rollbar is an error reporting tool. So, when does an error get reported to Rollbar from this service? There are a few scenarios (logged error, uncaught exception, unhandled rejection, etc.), but let’s focus on the happy path: an error has been logged via our logging module:
+
+```javascript
+logger.error({ foo: "extra data" }, err);
+```
+
+In this service, a request logging middleware automatically logs an error whenever a request responds with a 5xx status code.
+
+In this logging module configuration, API requests to Rollbar are nonblocking. In the context of a request our service is handling, this is asynchronous, running in the background, and does not block our delivery of a response.
+
+So, at last, here’s the final puzzle piece solved:
+
+> **💡 Insight #4:** When an error is “logged” in a request handler, the actual logging side effects nondeterministically occur either before or after the response is delivered.
+
+It’s a race condition:
+
+```text
+|------------- Request lifecycle -------------|
+|^ Start handling request                     |
+|         ^ "Log" an error                    |
+|                                             |
+Scenario 1:                                   |
+|            ^ Finish flushing the error      |
+|                 ^ Send request response     |
+Scenario 2:                                   |
+|            ^ Send request response          |
+|                 ^ Finish flushing the error |
+```
+
+And it only matters because…
+
+> **💡 Insight #5:** rollbar.js mutates error payloads!
+
+It was obvious from the observations above, but I easily confirmed this by [reading the source code](https://github.com/rollbar/rollbar.js/blob/f0140a050c270981cfb980c9aa492a2d032fcb2f/src/utility.js#L156).
+
+To summarize: when a request is about to respond with a 5xx status code, an error is logged, and a race condition occurs — if the response is delivered first, great; but if the error payload is scrubbed first (right before being sent to the Rollbar API), this scrubbing **mutates** `req.user` such that when the response is about to be delivered, a frivolous and corrupted `Set-Cookie` header is attached to the response.
+
+When this occurs, the browser updates its cookie with the updated payload. On subsequent requests, this corrupted cookie is sent along via the `Cookie` header. The JWT in the cookie is perfectly valid, correctly encoded, and cryptographically signed with the service’s secret, so it’s validated, decoded, and parsed by the service and used to populate `req.user`. The auth middleware sees a truthy `req.user.tempWorker` (the string "\*\*\*\*\*\*\*\*") and sends a 403.
+
+Case closed.
+
+## The fix
+
+“Fixing” the bug was the boring part. I applied a temporary fix to clone the user object before logging it, and I opened three rollbar.js issues ([one](https://github.com/rollbar/rollbar.js/issues/508), [two](https://github.com/rollbar/rollbar.js/issues/509), [three](https://github.com/rollbar/rollbar.js/issues/507)).
+
+## Lessons learned
+
+What are my takeaways from this story? I have only some scattered thoughts:
+
+- When investigating difficult bugs, you often need to ignore your instincts. Your instincts tell you “X should work this way” and gloss over X, and “Y should work that way” and gloss over Y, and pretty soon you’re glossing over everything; but something, somewhere isn’t working how it’s intended. Ignore your instincts and follow only the evidence. Write down or say out loud only what you truly, truly know for certain, and draw only logical conclusions from there — or, identify areas where evidence is still missing, devise a way to gather it, and repeat.
+- In general, it’s safe to assume the bug is likely in your source code. Occasionally, it’s in a library. Sometimes though, it’s three library bugs wearing a race-condition trench coat. Sometimes.
+- None of this would have been possible with a robust type system… but that’s a post for another day.
+
+Thanks for reading.

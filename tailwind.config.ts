@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 import animate from "tailwindcss-animate";
+import typography from "@tailwindcss/typography";
 
 export default {
   darkMode: ["class"],
@@ -99,7 +100,24 @@ export default {
         "slide-up": "slideUp 0.5s ease-out forwards",
         "cursor-blink": "blink 1s step-start infinite",
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            "blockquote p:first-of-type::before": { content: "none" },
+            "blockquote p:last-of-type::after": { content: "none" },
+            figure: {
+              marginLeft: "auto",
+              marginRight: "auto",
+              textAlign: "center",
+            },
+            "figure img": {
+              marginLeft: "auto",
+              marginRight: "auto",
+            },
+          },
+        },
+      },
     },
   },
-  plugins: [animate],
+  plugins: [animate, typography],
 } satisfies Config;

@@ -1,0 +1,102 @@
+---
+import { getCollection } from "astro:content";
+import ExternalLinkIcon from "./icons/ExternalLinkIcon.astro";
+
+const articles = (await getCollection("articles"))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+const otherPublications = [
+  {
+    title: "Correction of spatial bias in oligonucleotide array data",
+    journal: "Advances in Bioinformatics",
+    link: "http://dx.doi.org/10.1155/2013/167915",
+    type: "Peer-reviewed research paper",
+    date: "Feb 2013",
+  },
+];
+
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    timeZone: "UTC",
+  });
+};
+---
+
+<section id="writing" class="py-20 bg-background">
+  <div class="container mx-auto px-4">
+    <h2 class="section-title">Publications & Writing</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div>
+        <h3
+          class="text-xl font-mono font-bold mb-6 text-primary flex items-center"
+        >
+          <span class="mr-2">#</span> Latest Articles
+        </h3>
+        <div class="space-y-6">
+          {
+            articles.map((article) => (
+              <div class="group">
+                <a href={`/articles/${article.slug}`} class="block">
+                  <div class="flex justify-between items-baseline mb-1">
+                    <h4 class="font-bold text-lg group-hover:text-primary transition-colors">
+                      {article.data.title}
+                    </h4>
+                    <span class="text-xs font-mono text-muted-foreground ml-2">
+                      {formatDate(article.data.pubDate)}
+                    </span>
+                  </div>
+                  <p class="text-sm text-muted-foreground line-clamp-2">
+                    {article.data.description}
+                  </p>
+                </a>
+              </div>
+            ))
+          }
+          <a
+            href="/articles"
+            class="inline-block text-sm font-mono text-primary hover:text-accent transition-colors mt-4"
+          >
+            View all articles →
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <h3
+          class="text-xl font-mono font-bold mb-6 text-primary flex items-center"
+        >
+          <span class="mr-2">#</span>Publications
+        </h3>
+        <div class="space-y-6">
+          {
+            otherPublications.map((pub) => (
+              <div class="group">
+                <a href={pub.link} target="_blank" class="block">
+                  <div class="flex justify-between items-baseline mb-1">
+                    <h4 class="font-bold text-lg group-hover:text-primary transition-colors flex items-center gap-2">
+                      {pub.title}
+                      <ExternalLinkIcon size={14} />
+                    </h4>
+                    <span class="text-xs font-mono text-muted-foreground ml-2">
+                      {pub.date}
+                    </span>
+                  </div>
+                  <p class="text-sm text-muted-foreground italic line-clamp-2">
+                    {pub.journal}
+                  </p>
+                  <div class="text-xs font-mono text-accent mb-1">
+                    {pub.type}
+                  </div>
+                </a>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

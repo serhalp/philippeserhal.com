@@ -2,25 +2,54 @@
 import BlueskyIcon from "./icons/BlueskyIcon.astro";
 import GitHubIcon from "./icons/GitHubIcon.astro";
 import LinkedInIcon from "./icons/LinkedInIcon.astro";
-import SubstackIcon from "./icons/SubstackIcon.astro";
 ---
 
 <header class="bg-background/80 backdrop-blur-md border-b border-border">
-  <div class="container flex justify-between items-center py-4">
-    <div class="flex items-center gap-2">
-      <a href="/" class="font-mono text-lg font-bold">
+  <div class="container flex justify-between items-center py-8">
+    <div class="flex items-center gap-20">
+      <a
+        href="/"
+        class="font-mono text-2xl font-bold tracking-tight hover:text-primary transition-colors"
+      >
         <span class="text-primary">~</span>/serhalp
       </a>
+
+      <nav class="flex items-center gap-12 text-lg font-mono">
+        <a
+          href="/"
+          class="relative py-2 text-muted-foreground hover:text-foreground transition-colors group"
+        >
+          <span
+            class="text-muted-foreground/50 group-hover:text-primary transition-colors"
+            >[0]</span
+          > ~/
+          <span
+            class="absolute bottom-0 left-0 w-full h-0.5 bg-primary/30 transition-all duration-300 group-hover:bg-primary"
+          ></span>
+        </a>
+        <a
+          href="/articles"
+          class="relative py-2 text-muted-foreground hover:text-foreground transition-colors group"
+        >
+          <span
+            class="text-muted-foreground/50 group-hover:text-primary transition-colors"
+            >[1]</span
+          > ~/articles
+          <span
+            class="absolute bottom-0 left-0 w-full h-0.5 bg-primary/30 transition-all duration-300 group-hover:bg-primary"
+          ></span>
+        </a>
+      </nav>
     </div>
 
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-6">
       <a
         href="https://github.com/serhalp"
         class="social-icon"
         aria-label="GitHub Profile"
         title="GitHub Profile"
       >
-        <GitHubIcon size={20} />
+        <GitHubIcon size={24} />
       </a>
       <a
         href="https://www.linkedin.com/in/philippe-serhal"
@@ -28,7 +57,7 @@ import SubstackIcon from "./icons/SubstackIcon.astro";
         aria-label="LinkedIn Profile"
         title="LinkedIn Profile"
       >
-        <LinkedInIcon size={20} />
+        <LinkedInIcon size={24} />
       </a>
       <a
         href="https://bsky.app/profile/philippeserhal.com"
@@ -36,15 +65,7 @@ import SubstackIcon from "./icons/SubstackIcon.astro";
         aria-label="Bluesky Profile"
         title="Bluesky Profile"
       >
-        <BlueskyIcon size={20} />
-      </a>
-      <a
-        href="https://serhalp.substack.com"
-        class="social-icon"
-        aria-label="Substack Blog"
-        title="Substack Blog"
-      >
-        <SubstackIcon size={20} />
+        <BlueskyIcon size={24} />
       </a>
     </div>
   </div>

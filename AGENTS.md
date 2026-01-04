@@ -3,9 +3,13 @@
 ## Project Structure & Module Organization
 
 - `src/pages`: Astro route entries (e.g., `index.astro`); keep filenames aligned with final URLs.
+- `src/content`: Astro Content Collections (e.g., `articles/`).
+  - Use a directory-per-post structure: `src/content/articles/<slug>/index.mdx`.
+  - Colocate images and assets within the post directory and use ESM imports in MDX for build-time validation and optimization.
+  - Collection schemas are defined in `src/content/config.ts`.
 - `src/layouts`: Shared document shells for metadata, header/footer framing, and global wrappers.
 - `src/components`: Reusable UI; prefer `.astro` for static composition and `.tsx` for interactive pieces (Preact JSX runtime). Keep component files PascalCase.
-- `src/styles/global.css`: Tailwind base layers and custom tokens; `tailwind.config.ts` holds theme extensions and animations.
+- `src/styles/global.css`: Tailwind base layers and custom tokens; `tailwind.config.ts` holds theme extensions, animations, and Typography (`prose`) overrides.
 - `public`: Static assets (favicons, manifest) served as-is. Build artifacts land in `dist/` (ignored). Root configs: `astro.config.mjs`, `eslint.config.js`, `tsconfig.json`, `netlify.toml`.
 
 ## Build, Test, and Development Commands
@@ -21,20 +25,18 @@
 
 ## Coding Style & Naming Conventions
 
-- TypeScript strict; Preact components use JSX runtime (`tsx`) and state via `@preact/signals` (avoid React-like `useState`). Follow Prettier defaults (2-space indent, semicolons); avoid manual style tweaks and run `pnpm format` before pushing.
-- ESLint enforces Astro, Preact, accessibility, and TypeScript rules; keep JSX free of unused imports and a11y violations.
-- Components: PascalCase filenames/exports; hooks/utilities (if added) should be camelCase. Routes under `src/pages` should mirror URL slugs (lowercase, hyphenated when multi-word).
-- Use Tailwind utilities for layout/spacing; keep bespoke CSS in `global.css` and prefer theme tokens from `tailwind.config.ts`.
+- **Blog Content:** Use MDX for articles to support semantic `<figure>` tags and optimized image imports.
+- **Date Handling:** Always use `timeZone: "UTC"` when formatting article dates (e.g., `toLocaleDateString("en-US", { ..., timeZone: "UTC" })`) to prevent off-by-one errors caused by local build environment offsets.
+- **TypeScript:** Strict mode; Preact components use JSX runtime (`tsx`) and state via `@preact/signals`. Follow Prettier defaults.
+- **Styling:** Use Tailwind utilities and the `@tailwindcss/typography` (`prose`) plugin for content. Custom `prose` overrides (like centering figures) should live in `tailwind.config.ts`.
+- **Navigation:** Header navigation follows an indexed directory style (e.g., `[0] ~/`, `[1] ~/articles`) using monospace fonts to match the terminal aesthetic.
 
 ## Testing Guidelines
 
 - There are no unit/e2e suites yet; quality gates are formatting, linting, and `astro:check`.
 - For UI changes, manually verify responsive behavior in `pnpm dev` and confirm interactive Preact pieces (e.g., `Hero`, `Terminal`) render without console errors.
-- If adding tests later, co-locate with features or use `__tests__` folders; keep filenames descriptive and align with component/page names.
 
 ## Commit & Pull Request Guidelines
 
-- Commit messages follow a Conventional Commit style seen in history (e.g., `chore(deps): update tailwindcss to v3.4.19`); use meaningful types (`feat`, `fix`, `chore`, `refactor`, `docs`).
-- Keep commits scoped and readable; avoid bundling unrelated changes. Include dependency bumps separately.
-- PRs should summarize intent, list key changes, and link issues if applicable. Attach before/after screenshots or short clips for visual updates.
-- Confirm `pnpm test` passes before opening or merging; note any deviations (e.g., known lint suppressions) in the PR description.
+- Commit messages follow a Conventional Commit style (e.g., `feat(blog): add frameworks year in review`); use meaningful types (`feat`, `fix`, `chore`, `refactor`, `docs`).
+- PRs should summarize intent and confirm `pnpm test` passes before merging.
