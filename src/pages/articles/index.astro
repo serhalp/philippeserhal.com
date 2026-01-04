@@ -4,6 +4,7 @@ import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
+import RssIcon from "../../components/icons/RssIcon.astro";
 
 const articles = (await getCollection("articles")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
@@ -23,7 +24,17 @@ const formatDate = (date: Date) => {
   <div class="bg-background text-foreground min-h-screen flex flex-col">
     <Header />
     <main class="flex-grow container py-12">
-      <h1 class="section-title mb-12">Articles</h1>
+      <div class="flex items-center gap-4 mb-12">
+        <h1 class="section-title mb-0">Articles</h1>
+        <a
+          href="/rss.xml"
+          class="text-muted-foreground hover:text-primary transition-colors"
+          aria-label="RSS Feed"
+          title="RSS Feed"
+        >
+          <RssIcon size={24} />
+        </a>
+      </div>
 
       <div class="grid gap-12 max-w-6xl">
         {

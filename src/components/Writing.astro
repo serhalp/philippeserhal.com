@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import ExternalLinkIcon from "./icons/ExternalLinkIcon.astro";
+import RssIcon from "./icons/RssIcon.astro";
 
 const articles = (await getCollection("articles"))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
@@ -31,11 +32,21 @@ const formatDate = (date: Date) => {
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <div>
-        <h3
-          class="text-xl font-mono font-bold mb-6 text-primary flex items-center"
-        >
-          <span class="mr-2">#</span> Latest Articles
-        </h3>
+        <div class="flex items-center gap-3 mb-6">
+          <h3
+            class="text-xl font-mono font-bold text-primary flex items-center"
+          >
+            <span class="mr-2">#</span> Latest Articles
+          </h3>
+          <a
+            href="/rss.xml"
+            class="text-muted-foreground hover:text-primary transition-colors"
+            aria-label="RSS Feed"
+            title="RSS Feed"
+          >
+            <RssIcon size={20} />
+          </a>
+        </div>
         <div class="space-y-6">
           {
             articles.map((article) => (

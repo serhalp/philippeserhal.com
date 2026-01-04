@@ -10,6 +10,8 @@ export default defineConfig({
   output: "static",
   adapter: netlify(),
 
+  site: import.meta.env.URL ?? "https://philippeserhal.com",
+
   markdown: {
     shikiConfig: {
       theme: "plastic", // alternatives I like: catppuccin-macchiato, slack-dark

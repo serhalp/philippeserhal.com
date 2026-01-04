@@ -56,6 +56,12 @@ const imageUrl = image ? new URL(image, Astro.url) : null;
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="manifest" href="/site.webmanifest" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Philippe Serhal"
+      href={new URL("rss.xml", Astro.site).toString()}
+    />
 
     <title>{title}</title>
     <meta name="title" content={title} />
