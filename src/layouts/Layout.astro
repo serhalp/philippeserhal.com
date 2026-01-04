@@ -4,12 +4,16 @@ import "../styles/global.css";
 interface Props {
   title?: string;
   description?: string;
+  image?: string;
 }
 
 const {
   title = "Philippe Serhal — Software Engineer",
   description = "Philippe Serhal is an experienced Software Engineer. He makes computers solve problems.",
+  image,
 } = Astro.props;
+
+const imageUrl = image ? new URL(image, Astro.url) : null;
 ---
 
 <!doctype html>
@@ -52,17 +56,24 @@ const {
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="manifest" href="/site.webmanifest" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Philippe Serhal"
+      href={new URL("rss.xml", Astro.site).toString()}
+    />
 
     <title>{title}</title>
     <meta name="title" content={title} />
     <meta name="description" content={description} />
     <meta name="author" content="Philippe Serhal" />
     <link rel="canonical" href={Astro.url} />
+
     <meta property="og:type" content="website" />
     <meta property="og:url" content={Astro.url} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <!-- TODO(serhalp): Add an `og:image` -->
+    {imageUrl && <meta property="og:image" content={imageUrl} />}
   </head>
   <body>
     <div id="root"><slot /></div>

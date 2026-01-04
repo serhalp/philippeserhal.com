@@ -67,6 +67,7 @@ const Terminal = ({
               ref={inputRef}
               type="text"
               name={inputName}
+              aria-label={inputName || "Terminal Input"}
               value={inputValue.value}
               onInput={(e) => {
                 const target = e.currentTarget as HTMLInputElement;

@@ -1,0 +1,305 @@
+---
+title: "Frontend frameworks, a 2024 year in review"
+pubDate: 2025-01-17
+description: "Highlights and emerging trends in 2024, plus what to expect in 2025."
+ogImage: "./og.png"
+external:
+  url: "https://www.netlify.com/blog/2024-frameworks-year-in-review/"
+  label: "the Netlify Blog"
+---
+
+import astroServerIslands from "./astro-server-islands.jpg";
+import frameworkPositivity from "./framework-positivity.png";
+import multiFlight from "./multi-flight.png";
+import nuxtFutureFlags from "./nuxt-future-flags.png";
+import preactSignals from "./preact-signals.png";
+import routingTypeSafety from "./routing-type-safety.jpg";
+import rspackVsWebpack from "./rspack-vs-webpack.png";
+import viteEnvApi from "./vite-env-api.png";
+import viteGrowth from "./vite-growth.png";
+
+The world of web development is constantly evolving and 2024 was no exception. We know you’re too busy shipping features to keep up with it all.
+
+Luckily, Netlify is full of web nerds with a passion for building a better web—our Frameworks engineering team has been keeping tabs and taking notes (seriously, you don’t want to know how many Discord servers we’re in). It’s part of how we managed to achieve [day-one support for Next.js 15](https://www.netlify.com/blog/deploy-nextjs-15/), [Svelte 5](https://www.netlify.com/blog/svelte-5-full-support/), [Angular 18](https://developers.netlify.com/guides/how-to-deploy-angular-18/), [Astro 5](https://astro.build/blog/astro-5/), and even [pre-release support for Nuxt 4](https://www.netlify.com/blog/platform-primitives-with-nuxt-4/). So why not share our insights with the community?
+
+Keep reading for a primer on the trends and plot twists we saw this year, some quick-fire frontend framework news, a dozen releases including some exciting newcomers, and what to expect next year. You’ll be up to speed in no time.
+
+## Frameworks copied one another’s homework
+
+### Server Functions pattern spreads
+
+Next.js’s [Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations) provide a [tRPC](https://trpc.io/)-like developer experience when crossing the browser-server chasm: call a function on your server from the browser and the framework transparently turns this into a fetch request to your server under the hood, with full type safety.
+
+This year saw this pattern spread to other full-stack frameworks:
+
+- React 19 finally shipped stable [Server Functions](https://react.dev/reference/rsc/server-functions), a generalization of Server Actions, via the new `"use server"` directive.
+- Astro [shipped stable Actions](https://astro.build/blog/astro-4150/), following the same pattern.
+- SolidStart 1.0 shipped with support for both [Solid Actions](https://docs.solidjs.com/solid-router/concepts/actions) and a [more general `"use server"` directive](https://docs.solidjs.com/solid-start/reference/server/use-server). (Although 1.0 only shipped this year, this was actually the very first instance of this pattern!)
+- TanStack Start shipped a beta with support for [Server Functions](https://tanstack.com/router/latest/docs/framework/react/start/server-functions) that can even be called seamlessly from both the browser (turned into a fetch request) and the server (called as-is).
+
+### Component-level prerendering goes mainstream
+
+Historically, there were [_SSG_](https://developer.mozilla.org/en-US/docs/Glossary/SSG) sites and [_SSR_](https://developer.mozilla.org/en-US/docs/Glossary/SSR) sites. A few years ago, many frameworks started supporting hybrid sites, where some routes can be _prerendered_ (or _statically rendered_) and others _dynamically rendered_. Next.js’s App Router even does this [automatically based on heuristics](https://nextjs.org/docs/app/building-your-application/caching#full-route-cache).
+
+Lately, frameworks have been taking this even further, by allowing for _parts_ of a page to be prerendered (the _static shell_) and the rest to be rendered on the server on the fly. This was popularized by React with [`<Suspense>` and Streaming SSR](https://github.com/reactwg/react-18/discussions/37), but it isn’t until recently that meta-frameworks have started to fully implement this in a way that can be directly used by web developers: [Remix has supported it](https://remix.run/docs/en/main/guides/streaming) since 2023 and Next.js first announced [experimental support for what they called _Partial Prerendering (PPR)_](https://nextjs.org/learn/dashboard-app/partial-prerendering) that same year.
+
+<figure>
+  <img
+    src={astroServerIslands.src}
+    alt="A depiction of Astro Server Islands, server-rendered components within a statically rendered shell"
+  />
+  <figcaption>
+    Source:
+    [https://astro.build/blog/future-of-astro-server-islands/](https://astro.build/blog/future-of-astro-server-islands/)
+  </figcaption>
+</figure>
+
+This could take up a whole other post (and probably will 👀), but here’s the gist of the 2024 update:
+
+- One year after experimental PPR in Next.js 14, [Next.js 15 shipped](https://nextjs.org/blog/next-15) without any updates to PPR, as the team wrangles complexities this uncovered.
+- React Router 7 shipped with [the same functionality](https://reactrouter.com/how-to/suspense) as Remix 2.
+- The upstart React-based TanStack Start framework shipped a beta [with the same pattern](https://tanstack.com/router/latest/docs/framework/react/guide/deferred-data-loading).
+- Astro 5 shipped [Server Islands](https://developers.netlify.com/guides/how-astros-server-islands-deliver-progressive-rendering-for-your-sites/), meeting the same needs but with a web-standard implementation allowing for any platform to cache the static shell or even individual dynamic islands.
+
+If you’re wondering why the React Suspense-based approaches aren’t trivially cacheable, [watch this video](https://www.youtube.com/watch?v=bFSvD7PVBfQ) and notice how the static shell and the dynamic components are coupled as a single response body—or wait for our upcoming deep-dive post on this!
+
+### A signal by any other name would smell as sweet
+
+To handle interactivity in the browser without letting web developers handle everything manually (think jQuery) or re-rendering the whole page on every change, frameworks must keep track of the intricate web of dependencies between all the variables in your site’s UI and in your data. This is usually called the framework’s “reactivity” model.
+
+A framework’s reactivity model is a big part of what makes each framework unique. It manifests itself to you in the framework's syntax and constraints, molds your mental models, is a major determiner of performance, and—let's be honest—is a common source of bugs! As an example, you’re likely familiar with React’s reactivity model: Hooks (introduced in 2018 in React 16.8) and, previously, methods like `shouldComponentUpdate` and friends.
+
+<figure>
+  <img
+    src={preactSignals.src}
+    alt="A code sample showing Preact Signals in use"
+  />
+</figure>
+
+Reactivity models have changed in bursts since the first frameworks in 2010. (For a much deeper dive, start with [A Hands-on Introduction to Fine-Grained Reactivity](https://dev.to/ryansolid/a-hands-on-introduction-to-fine-grained-reactivity-3ndf), [The Evolution of Signals in JavaScript](https://dev.to/this-is-learning/the-evolution-of-signals-in-javascript-8ob), or anything Ryan Carniato of Solid.js has written.) We are witnessing another burst: this year, three major frameworks shipped brand-new reactivity models:
+
+- [Svelte 5](https://svelte.dev/blog/svelte-5-is-alive) introduced [_Runes_](https://svelte.dev/blog/runes), heavily inspired by Solid.js _Signals_.
+- [Angular 18](https://blog.angular.dev/angular-v18-is-now-available-e79d5ac0affe) introduced experimental _zoneless change detection_ and [Angular 19](https://blog.angular.dev/meet-angular-v19-7b29dfd05b84) continued to iterate on this new _Signals_-based reactivity.
+- React shipped a beta release of [_React Compiler_](https://react.dev/blog/2024/10/21/react-compiler-beta-release), an approach relying on static analysis _at build time_ of your components to compute dependencies. This approach has been [used by Svelte for years](https://svelte.dev/docs/svelte/legacy-reactive-assignments), but is quite a departure from the more common _runtime_ reactivity model of most frameworks, [like Vue’s](https://vuejs.org/guide/extras/reactivity-in-depth.html).
+
+What’s more, a [proposal to bring a standard Signal implementation to JavaScript](https://github.com/tc39/proposal-signals) moved to [stage 1](https://tc39.es/process-document/) this year.
+
+### Astro leveled the playing field
+
+Astro is a fairly recent newcomer that has garnered a lot of buzz lately (in the just-released State of JS 2024 report, it [ranked #1 in interest, retention, and positivity](https://share.stateofjs.com/share/prerendered?localeId=en-US&surveyId=state_of_js&editionId=js2024&blockId=meta_frameworks_ratios%5C%C2%B6ms=%5C%C2%A7ionId=libraries&subSectionId=meta_frameworks)).
+
+<figure>
+  <img
+    src={frameworkPositivity.src}
+    alt="A chart from the State of JS 2024 report showing Astro as the number one framework"
+  />
+</figure>
+
+While staying true to its roots as a minimal framework for content-driven sites, it added some key features in 2024 to quiet some critics:
+
+- Actions, Astro’s answer to Next.js’s Server Functions (more on this above).
+- Server Islands, Astro’s answer to Next.js’s Partial Pre-Rendering (more on this above)
+- [Content Layer](https://astro.build/blog/future-of-astro-content-layer/), Astro’s answer to [Gatsby’s GraphQL Data Layer](https://www.gatsbyjs.com/docs/reference/graphql-data-layer/).
+- Sessions, Astro’s (experimental) storage-agnostic answer to a common meta-framework provision for user session handling (e.g. [Remix sessions](https://remix.run/docs/en/main/utils/sessions), [NuxtAuth](https://auth.sidebase.io/), [NextAuth.js](https://next-auth.js.org/)).
+- [Astro DB](https://astro.build/blog/astro-db/) and Astro Studio (with [a pivot away from their own SaaS](https://astro.build/blog/goodbye-astro-studio/) toward an agnostic layer), Astro’s agnostic layer to interface with relational databases.
+
+### Vite is even more ubiquitous
+
+[Vite](https://vite.dev) is a full-featured bundler, compiler, and development server for the web.
+
+This year, it was [the most favored option](https://share.stateofjs.com/share/prerendered?localeId=en-US&surveyId=state_of_js&editionId=js2024&blockId=build_tools_ratios%5C%C2%B6ms=%5C%C2%A7ionId=libraries&subSectionId=build_tools) for web developers using everything from React to Vue, Svelte, or no framework at all. Its focus on performance, out-of-the-box functionality, and limitless configurability has led to a meteoric rise in just a few years.
+
+<figure>
+  <img
+    src={viteGrowth.src}
+    alt="A diagram showing increasing NPM downloads for Vite and numerous logos of frameworks and libraries using"
+  />
+  <figcaption>
+    Source:
+    [https://blog.stackblitz.com/posts/what-is-vite-introduction/](https://blog.stackblitz.com/posts/what-is-vite-introduction/)
+  </figcaption>
+</figure>
+
+It is also used under the hood by meta-frameworks like Astro, Nuxt, and SvelteKit—in fact, this duality is a big reason for Vite’s success.
+
+This year, Remix [shipped support for Vite](https://remix.run/blog/remix-vite-stable) (and later [dropped support for its own compiler](https://reactrouter.com/upgrading/remix)), Hydrogen [switched to Vite](https://github.com/Shopify/hydrogen/discussions/1987), and even the old-school Ember.js framework is [switching to Vite](https://www.youtube.com/watch?v=Nh6S4cfehs0).
+
+This leaves Next.js (Webpack/Turbopack) and Gatsby (Webpack) as the only major front-end meta-frameworks not using Vite.
+
+### Nitro isn’t just for Nuxt anymore
+
+[Nitro](https://nitro.build/) is a full-featured server engine library that provides an agnostic development and production server layer for frameworks to build upon, unlocking out-of-the-box support for dozens of deployment targets, such as Node.js, Deno, Netlify Functions, Netlify Edge Functions, Cloudflare Workers, and so on.
+
+Until recently, it was [only used by Nuxt](https://nuxt.com/docs/guide/concepts/server-engine).
+
+This year, [AnalogJS 1.0 launched](https://dev.to/analogjs/announcing-analogjs-10-19an), [SolidStart 1.0 launched](https://www.solidjs.com/blog/solid-start-the-shape-frameworks-to-come), and TanStack Start was announced and quickly [reached beta](https://x.com/tannerlinsley/status/1859012733930528803?lang=en&mx=2). All three of these newcomer frameworks use Vite and Nitro under the hood. What’s more, this combo was repackaged as an intermediary layer called [Vinxi](https://github.com/nksaraf/vinxi)—which is used by SolidStart and TanStack Start—significantly lowering the barrier to entry for new frameworks.
+
+Angular also announced that they are [exploring switching to Nitro](https://angular.dev/roadmap#improve-tooling).
+
+## More compatibility across runtimes & platforms
+
+2024 was a great year for compatibility!
+
+- [Deno 2 launched with full compatibility with Node.js and NPM modules](https://deno.com/blog/v2.0). All frameworks now run on the Deno runtime!
+- [The Cloudflare Workers runtime vastly increased its Node.js and NPM module compatibility](https://blog.cloudflare.com/builder-day-2024-announcements/#improved-node.js-compatibility-is-now-ga).
+- Bun incrementally increased [its Node.js compatibility](https://runtime-compat.unjs.io/) throughout the year.
+- [Next.js announced upcoming support for the Node.js runtime in middleware](https://github.com/vercel/next.js/discussions/71727).
+- The Vite 6 [Environment API](https://vite.dev/guide/api-environment) shipped, unlocking future improvements to runtime and platform compatibility for a dozen frameworks (more on this below).
+- Next.js made strides on openness:
+  - The OpenNext initiative spearheaded by SST was joined by [Cloudflare](https://blog.cloudflare.com/builder-day-2024-announcements/#cloudflare-joins-opennext) and [Netlify](https://www.netlify.com/blog/netlify-joins-opennext/).
+  - [The self-hosting docs were augmented](https://thenewstack.io/vercel-makes-changes-to-next-js-to-simplify-self-hosting/) and [Next.js 15 shipped improvements to self-hosting](https://nextjs.org/blog/next-15#improvements-for-self-hosting).
+  - Vercel spun out a [separate Next.js GitHub org with examples for deploying to Vercel competitors](https://github.com/nextjs).
+- Node.js [shipped experimental support for `require()` ing ES modules in 22.0.0](https://nodejs.org/en/blog/announcements/v22-release-announce#support-requireing-synchronous-esm-graphs) and [experimental support for TypeScript syntax in 23.6.0](https://www.totaltypescript.com/typescript-is-coming-to-node-23)!
+
+## Developer experience kept improving
+
+### Blazing-fast Rust-based build tools are almost here
+
+Multiple efforts to write new compilers and bundlers in Rust are underway and made significant progress in 2024:
+
+<figure>
+  <img
+    src={rspackVsWebpack.src}
+    alt="A diagram showing webpack with a build time of 6.52s, rspack 0.1 with 0.64"
+  />
+  <figcaption>
+    Source:
+    [https://rspack.dev/blog/announcing-1-0](https://rspack.dev/blog/announcing-1-0)
+  </figcaption>
+</figure>
+
+- [Turbopack](https://turbo.build/pack/docs), Next.js’s Rust rewrite of Webpack, [was marked as stable in dev](https://nextjs.org/blog/turbopack-for-development-stable) and will become the default soon.
+- [Rspack](https://rspack.dev/), a straight Rust port of Webpack, [shipped a stable 1.0](https://rspack.dev/blog/announcing-1-0).
+- [Rolldown](https://rolldown.rs/), a Rollup-compatible bundler written in Rust, [shipped its first beta on Christmas](https://github.com/rolldown/rolldown/releases/tag/v1.0.0-beta.1) and [secured funding to accelerate its development](https://voidzero.dev/posts/announcing-voidzero-inc), along with Vite and [Oxc](https://oxc.rs/). In the near future, [Rolldown will replace Rollup and ESBuild to power Vite under the hood](https://rolldown.rs/guide/#why-rolldown) and nearly all frameworks will get an order of magnitude faster builds and dev servers.
+
+### Upgrades became easier than ever
+
+#### Migration codemods automate the toil
+
+This year, Next.js 15, React Router 7, Astro 5, Nuxt 4, and Svelte 5 all came with an official (sometimes even built-in) upgrade codemod. Most of these were developed and distributed on the impressive [Codemod.com platform](http://Codemod.com).
+
+#### Opt in to breaking changes at your leisure with “future flags”
+
+Gone are the days of choosing between delaying painful upgrades or opting in early to unstable releases. Many libraries nowadays—including to some extent all major frameworks—now follow the “future flag” pattern, where unstable features and breaking changes are shipped incrementally to the current major version, hidden behind a configuration flag. You can explicitly opt into individual flags at your own pace depending on your needs. Notable examples include [Astro’s experimental flags](https://docs.astro.build/en/reference/experimental-flags/), [Remix’s future flags](https://remix.run/docs/en/main/guides/api-development-strategy), and [Angular’s experimental providers](https://angular.dev/guide/experimental/zoneless).
+
+<figure>
+  <img
+    src={nuxtFutureFlags.src}
+    alt="A code example showing a nuxt.config.ts file with compatibilityVersion set to 4"
+  />
+</figure>
+
+Some libraries like Nuxt take this approach to its fullest potential—you can [quite literally opt into Nuxt 4 in Nuxt 3](https://nuxt.com/docs/getting-started/upgrade#opting-in-to-nuxt-4) by setting `compatibilityVersion` to `4` , which is just toggling a dozen features and breaking changes. Once Nuxt 4 is released, it will consist only of these toggles becoming the default.
+
+### Typechecking the elephant in the room
+
+Although Typescript has been ubiquitous in web development for years now, a small but meaningful corner of web frameworks has remained largely untyped: route params, search params, and cross-references for file-based routes.
+
+<figure>
+  <img
+    src={routingTypeSafety.src}
+    alt="A comparison of various aspects of route type safety for a few React-based frameworks"
+  />
+  <figcaption>
+    Source:
+    [https://x.com/gill_kyle/status/1835340921535332433](https://x.com/gill_kyle/status/1835340921535332433)
+  </figcaption>
+</figure>
+
+In 2024, we saw upstart framework [TanStack Start](https://tanstack.com/router/v1/docs/framework/react/overview#100-inferred-typescript-support) tackle this with a fresh approach that brings 100% end-to-end type safety to file-based routing—and much of it inferred. On the other hand, [Remix successor React Router 7 moved away from fully-file-based routing and introduced a type generation step](https://reactrouter.com/explanation/type-safety) in order to achieve similar outcomes. Meanwhile, [Next.js](https://nextjs.org/docs/app/api-reference/config/typescript#statically-typed-links), [Nuxt](https://nuxt.com/docs/guide/going-further/experimental-features#typedpages), and [Qwik](https://qwik.dev/docs/labs/typed-routes/) are cooking up their own solutions.
+
+## Emerging frameworks pushed the ecosystem forward
+
+As made evident by all the movement above, this is a fast-moving space. Much of that is due to innovation and pressure from emerging frameworks. Here’s a quick reference of the ones on our radar this year—and good fodder for your weekend projects in 2025?
+
+- [AnalogJS](https://analogjs.org/), an Angular meta-framework (stable since March 2024)
+- [Deno Fresh](https://fresh.deno.dev/), a Preact-based framework optimized for edge rendering (stable since June 2022)
+- [HTMX](https://htmx.org/), a return to basics (stable since November 2020)
+- [One](https://onestack.dev/), an experimental React-based framework (just announced in October 2024)
+- [RedwoodJS](https://redwoodjs.com/), a batteries-included full-stack React-based framework (stable since April 2022)
+- [SolidStart](https://start.solidjs.com/), a Solid.js meta-framework (stable since May 2024)
+- [TanStack Start](https://tanstack.com/start/latest), a new React meta-framework (in beta since December 2024)
+- [Qwik](https://qwik.dev/), a novel framework that introduces _resumability_ instead of hydration (stable since May 2023)
+
+## News
+
+### Major releases
+
+These are the (eleven!) major front-end framework releases that happened this year:
+
+- March 14: [AnalogJS 1.0](https://dev.to/analogjs/announcing-analogjs-10-19an)
+- May 21: [SolidStart 1.0](https://www.solidjs.com/blog/solid-start-the-shape-frameworks-to-come)
+- May 22: [Angular 18](https://developers.netlify.com/guides/how-to-deploy-angular-18/)
+- September 6: [RedwoodJS 8](https://redwoodjs.com/upgrade/v8)
+- October 2: [Eleventy 3](https://www.11ty.dev/blog/eleventy-v3/)
+- October 19: [Svelte 5](https://www.netlify.com/blog/svelte-5-full-support/)
+- October 21: [Next.js 15](https://nextjs.org/blog/next-15)
+- November 19: [Angular 19](https://blog.angular.dev/meet-angular-v19-7b29dfd05b84)
+- November 22: [React Router 7 (aka Remix 3)](https://developers.netlify.com/guides/how-to-deploy-a-react-router-7-site-to-netlify/) (ICYMI: on May 15, [Ryan Florence dropped a bomb at React Conf by announcing the Remix framework and the React Router library would merge and the Remix brand would “take a nap”](https://remix.run/blog/merging-remix-and-react-router)!)
+- December 3: [Astro 5](https://astro.build/blog/astro-5/)
+- December 5: [React 19](https://react.dev/blog/2024/12/05/react-19)
+
+Some other projects had notable releases as well:
+
+- April 24: [Node.js 22](https://nodejs.org/en/blog/announcements/v22-release-announce)
+- August 28: [Rspack 1.0](https://rspack.dev/blog/announcing-1-0)
+- October 3: [bolt.new](https://x.com/stackblitz/status/1841873251313844631)
+- October 9: [Deno 2](https://deno.com/blog/v2.0)
+- November 26: [Vite 6](https://vite.dev/blog/announcing-vite6)
+
+### Sponsorship and funding changes
+
+Some key projects announced partnership or funding news:
+
+- March 26: [Builder.io spun out Qwik as a community-owned project](https://www.builder.io/blog/qwik-next-leap)
+- April 24: [Builder.io (maintainers of Qwik) raised $20M in funding](https://www.builder.io/blog/builder-closes-20-million-funding-m12-microsoft)
+- July 15: [Astro partnered with Netlify](https://astro.build/blog/netlify-official-deployment-partner/)
+- September 30: [Evan You founded VoidZero](https://voidzero.dev/posts/announcing-voidzero-inc), a VC-backed company, to provide funding ($4.6M) and stability to Vite, Vitest, Rolldown, and OXC
+- December 2: [Astro partnered with Google](https://astro.build/blog/idx-official-online-editor-partner/)
+
+## Honorable mentions
+
+<figure>
+  <img src={multiFlight.src} alt="A depiction of fetch single-flighting" />
+  <figcaption>
+    Source:
+    [https://www.solidjs.com/blog/solid-start-the-shape-frameworks-to-come](https://www.solidjs.com/blog/solid-start-the-shape-frameworks-to-come)
+  </figcaption>
+</figure>
+
+Frameworks showed renewed interest in single-flighting requests from the browser: [Remix introduced Single Fetch](https://remix.run/docs/en/main/guides/single-fetch) (now the default in its successor React Router 7), [SolidStart 1.0 shipped with Single Flight Mutations](https://www.solidjs.com/blog/solid-start-the-shape-frameworks-to-come), and [TanStack Start is working on the same](https://x.com/AdamRackis/status/1869230195699499030).
+
+[Angular shipped _event replay_](https://blog.angular.dev/angular-v18-is-now-available-e79d5ac0affe#6226): retroactively applying user interactions that occurred on parts of the page that hadn’t yet been made interactive. It remains to be seen if others will follow suit. In the meantime, [Qwik sidesteps the problem entirely by designing for _resumability_](https://qwik.dev/docs/concepts/resumable/).
+
+Astro stole our hearts by [proactively collaborating with the ecosystem to improve the web platform when it found it had reached its limits](https://astro.build/blog/future-of-astro-zero-js-view-transitions/), making the web better for everyone in the process.
+
+Much of the web development community suddenly migrated to [Bluesky](https://bsky.app/) at the end of 2024.
+
+## What to expect in 2025
+
+<figure>
+  <img
+    src={viteEnvApi.src}
+    alt="A depiction of the Vite Environment API's architecture"
+  />
+  <figcaption>
+    Source:
+    [https://vite.dev/guide/api-environment](https://vite.dev/guide/api-environment)
+  </figcaption>
+</figure>
+
+If you’re looking for bold predictions for 2025, look elsewhere. Here are some sure bets we expect in the next year:
+
+- Angular releases occur on a [fixed schedule](https://angular.dev/reference/releases#support-policy-and-schedule), so expect to see Angular 20 in May and Angular 21 in November. Check out the [Angular roadmap](https://angular.dev/roadmap) for hints on what will ship.
+- Node.js 18 will reach End of Life (EOL) status in April. That only leaves you four months to upgrade your apps. ([Upgrade your Netlify builds and functions to Node.js 22 now!](https://answers.netlify.com/t/builds-functions-plugins-default-node-js-version-upgrade-to-22/135981))
+- Nuxt 4—which has been all but ready for months as of writing—will go stable. ([Opt in early on Netlify now.](https://www.netlify.com/blog/platform-primitives-with-nuxt-4/))
+- The [Vite Environment API](https://gitnation.com/contents/whats-new-in-vite-6), shipped in Vite 6 at the end of 2024, will lead to great improvements in local dev experience for many Vite-based frameworks, particularly in terms of stability, production parity, and runtime compatibility. (Expect developing Netlify sites to get even simpler 👀.)
+- TanStack Start, after shipping a beta release at the end of 2024, will ship a Release Candidate in 2025—maybe even a 1.0?
+- [Qwik 2.0](https://github.com/QwikDev/qwik/releases/tag/%40qwik.dev%2Fcore%40v2.0.0-alpha.0) will be released.
+- TanStack and Netlify will cook something up 👀.
+
+## Closing remarks
+
+Whew, you’re all caught up. Stay informed in the new year by following the [Netlify Changelog](https://www.netlify.com/changelog/).
+
+What will you build this year?

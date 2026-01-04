@@ -1,0 +1,85 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import ExternalLinkIcon from "../../components/icons/ExternalLinkIcon.astro";
+
+export async function getStaticPaths() {
+  const articles = await getCollection("articles");
+  return articles.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+};
+---
+
+<Layout
+  title={`${entry.data.title} | Philippe Serhal`}
+  description={entry.data.description}
+  image={entry.data.ogImage?.src}
+>
+  <div class="bg-background text-foreground min-h-screen flex flex-col">
+    <Header />
+    <main class="flex-grow container py-12">
+      <div class="max-w-5xl mx-auto">
+        <a
+          href="/articles"
+          class="text-primary hover:text-accent font-mono text-sm mb-8 inline-block"
+        >
+          &lt;- Back to articles
+        </a>
+
+        <header class="mb-12">
+          <time class="text-sm text-muted-foreground font-mono block mb-2">
+            {formatDate(entry.data.pubDate)}
+          </time>
+          <h1 class="text-4xl md:text-5xl font-bold mb-4">
+            {entry.data.title}
+          </h1>
+          <p
+            class="text-xl text-muted-foreground italic border-l-4 border-primary pl-4 py-2 bg-secondary/30"
+          >
+            {entry.data.description}
+          </p>
+        </header>
+
+        {
+          entry.data.external && (
+            <div class="mb-12 p-4 bg-secondary/50 border border-border rounded-lg flex items-center gap-3 text-sm font-mono">
+              <span class="text-primary font-bold">[INFO]</span>
+              <span class="text-muted-foreground">
+                This article was also published on
+              </span>
+              <a
+                href={entry.data.external.url}
+                target="_blank"
+                class="text-foreground hover:text-primary underline underline-offset-4 flex items-center gap-1.5 transition-colors"
+              >
+                {entry.data.external.label}
+                <ExternalLinkIcon size={14} />
+              </a>
+            </div>
+          )
+        }
+
+        <article class="prose prose-xl prose-invert prose-primary max-w-none">
+          <Content />
+        </article>
+      </div>
+    </main>
+    <Footer />
+  </div>
+</Layout>
