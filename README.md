@@ -19,6 +19,7 @@ The dev server runs at `http://localhost:4321`.
 
 ```bash
 pnpm test      # runs format check, lint, and type checking
+pnpm test:e2e  # runs end-to-end tests with Playwright
 pnpm lint      # eslint
 pnpm format    # prettier
 ```

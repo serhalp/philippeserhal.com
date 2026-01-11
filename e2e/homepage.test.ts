@@ -8,7 +8,7 @@ test.describe("Homepage", () => {
 
   test("should have main navigation", async ({ page }) => {
     await page.goto("/");
-    
+
     // Check for header navigation elements
     const header = page.locator("header");
     await expect(header).toBeVisible();
@@ -16,7 +16,7 @@ test.describe("Homepage", () => {
 
   test("should have main sections", async ({ page }) => {
     await page.goto("/");
-    
+
     // Check that main content is present
     const main = page.locator("main");
     await expect(main).toBeVisible();

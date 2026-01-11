@@ -7,15 +7,13 @@
     "astro:check": "astro check",
     "build": "astro build",
     "dev": "astro dev",
-    "e2e": "playwright test",
-    "e2e:ui": "playwright test --ui",
-    "e2e:headed": "playwright test --headed",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint --cache .",
     "lint:fix": "eslint --cache --fix .",
     "preview": "astro preview",
-    "test": "pnpm run format:check && pnpm run lint && astro check"
+    "test": "pnpm run format:check && pnpm run lint && astro check",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",
