@@ -17,3 +17,7 @@ jobs:
           fetch-depth: 0
       - name: Create Diff
         uses: e18e/action-dependency-diff@v1
+        with:
+          size-threshold: '500000' # 500KB - only report significant install size changes
+          duplicate-threshold: '3' # Only warn when a package appears 4+ times
+          detect-replacements: false # Disable module replacement suggestions to reduce noise
