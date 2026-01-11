@@ -19,5 +19,5 @@ jobs:
         uses: e18e/action-dependency-diff@v1
         with:
           size-threshold: '500000' # 500KB - only report significant install size changes
-          duplicate-threshold: '3' # Only warn when a package appears 4+ times
+          duplicate-threshold: '3' # Only warn when a package has more than 3 versions (4+)
           detect-replacements: false # Disable module replacement suggestions to reduce noise
