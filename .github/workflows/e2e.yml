@@ -29,7 +29,7 @@ jobs:
         uses: jakepartusch/wait-for-netlify-action@v1
         id: wait-for-netlify
         with:
-          site_name: "philippeserhal"
+          site_name: "philippeserhal" # Netlify site name (without .netlify.app)
           max_timeout: 600
 
       - name: Run Playwright tests against Netlify deploy
