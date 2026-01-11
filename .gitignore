@@ -17,6 +17,11 @@
 # cache files
 /.eslintcache
 
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
 # Local Netlify folder
 /.netlify
 
