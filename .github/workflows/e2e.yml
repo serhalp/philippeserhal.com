@@ -25,11 +25,17 @@ jobs:
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Build site
-        run: pnpm run build
+      - name: Wait for Netlify Deploy
+        uses: jakepartusch/wait-for-netlify-action@v1
+        id: wait-for-netlify
+        with:
+          site_name: "philippeserhal"
+          max_timeout: 600
 
-      - name: Run Playwright tests
+      - name: Run Playwright tests against Netlify deploy
         run: pnpm run test:e2e
+        env:
+          PLAYWRIGHT_TEST_BASE_URL: ${{ steps.wait-for-netlify.outputs.url }}
 
       - name: Upload Playwright Report
         uses: actions/upload-artifact@v4
