@@ -3,7 +3,9 @@ import ExternalLinkIcon from "./icons/ExternalLinkIcon.astro";
 import RssIcon from "./icons/RssIcon.astro";
 import { getWritingEntries } from "../lib/writing";
 
-const writingEntries = (await getWritingEntries()).slice(0, 3);
+const writingEntries = (await getWritingEntries())
+  .filter((entry) => !entry.isExternal)
+  .slice(0, 3);
 
 const otherPublications = [
   {
