@@ -1,0 +1,9 @@
+{
+  "title": "How to deploy a React Router 7 site to Netlify",
+  "pubDate": "2024-12-18",
+  "description": "Deploy a React Router 7 app to Netlify with the required build and hosting setup.",
+  "external": {
+    "url": "https://developers.netlify.com/guides/how-to-deploy-a-react-router-7-site-to-netlify/",
+    "label": "Netlify Developers"
+  }
+}

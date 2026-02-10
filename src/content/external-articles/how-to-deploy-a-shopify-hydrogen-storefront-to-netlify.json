@@ -1,0 +1,9 @@
+{
+  "title": "How to deploy a Shopify Hydrogen storefront to Netlify",
+  "pubDate": "2024-09-12",
+  "description": "Step-by-step guide to deploying a Shopify Hydrogen storefront on Netlify.",
+  "external": {
+    "url": "https://developers.netlify.com/guides/how-to-deploy-a-shopify-hydrogen-storefront-to-netlify/",
+    "label": "Netlify Developers"
+  }
+}
