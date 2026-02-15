@@ -86,9 +86,7 @@ const postUrl = postUri ? atUriToBskyUrl(postUri) : undefined;
           this.querySelector(".bluesky-comments-loading")?.classList.add(
             "hidden",
           );
-          this.querySelector(".bluesky-comments-empty")?.classList.remove(
-            "hidden",
-          );
+          this.#showNoPostState();
         }
       } catch {
         this.querySelector(".bluesky-comments-loading")?.classList.add(
@@ -218,6 +216,17 @@ const postUrl = postUri ? atUriToBskyUrl(postUri) : undefined;
         ".bluesky-comments-link",
       ) as HTMLAnchorElement | null;
       if (link) link.href = bskyUrl;
+    }
+
+    #showNoPostState() {
+      const cta = this.querySelector(".bluesky-comments-cta");
+      if (cta) cta.classList.add("hidden");
+      const empty = this.querySelector(".bluesky-comments-empty");
+      if (empty) {
+        empty.textContent =
+          "No Bluesky discussion yet. Comments will appear here once this post is shared on Bluesky.";
+        empty.classList.remove("hidden");
+      }
     }
   }
 
