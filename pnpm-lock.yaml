@@ -26,6 +26,9 @@ importers:
       astro:
         specifier: ^5.7.13
         version: 5.16.11(@netlify/blobs@10.5.0)(@types/node@25.0.9)(jiti@1.21.7)(lightningcss@1.30.1)(rollup@4.55.1)(typescript@5.9.3)(yaml@2.8.2)
+      bluesky-comments-tag:
+        specifier: ^0.0.3
+        version: 0.0.3
       preact:
         specifier: ^10.24.3
         version: 10.28.2
@@ -1761,6 +1764,9 @@ packages:
 
   bindings@1.5.0:
     resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
+
+  bluesky-comments-tag@0.0.3:
+    resolution: {integrity: sha512-I3SHlXJ+KmrqRstsxDJjhuGZs/Oqlhh0htKw1iFv0pnfopbTCG4tT3Khr6l6rK63nKoSizcG9OPclHXarc5mLw==}
 
   boolbase@1.0.0:
     resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
@@ -7070,6 +7076,8 @@ snapshots:
   bindings@1.5.0:
     dependencies:
       file-uri-to-path: 1.0.0
+
+  bluesky-comments-tag@0.0.3: {}
 
   boolbase@1.0.0: {}
 
