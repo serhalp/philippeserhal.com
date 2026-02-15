@@ -220,7 +220,16 @@ const postUrl = postUri ? atUriToBskyUrl(postUri) : undefined;
 
     #showNoPostState() {
       const cta = this.querySelector(".bluesky-comments-cta");
-      if (cta) cta.classList.add("hidden");
+      if (cta) {
+        const urlsJson = this.dataset.urls;
+        const articleUrl = urlsJson ? JSON.parse(urlsJson)[0] : null;
+        if (articleUrl) {
+          const composeUrl = `https://bsky.app/intent/compose?text=${encodeURIComponent(articleUrl)}`;
+          cta.innerHTML = `Start the discussion — <a href="${composeUrl}" class="bluesky-comments-link link-highlight" target="_blank" rel="noopener noreferrer">post this article on Bluesky</a>.`;
+        } else {
+          cta.classList.add("hidden");
+        }
+      }
       const empty = this.querySelector(".bluesky-comments-empty");
       if (empty) {
         empty.textContent =
