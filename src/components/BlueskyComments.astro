@@ -1,0 +1,294 @@
+---
+interface Props {
+  /** The AT URI of the Bluesky post — if provided, skips auto-discovery */
+  postUri?: string;
+  /** URLs to search for in the author's feed (canonical URL, external URL, etc.) */
+  urls?: string[];
+  /** The Bluesky DID of the post author (required for auto-discovery) */
+  authorDid?: string;
+}
+
+const { postUri, urls, authorDid } = Astro.props;
+
+function atUriToBskyUrl(atUri: string): string {
+  const match = atUri.match(
+    /^at:\/\/(did:[^/]+)\/app\.bsky\.feed\.post\/(.+)$/,
+  );
+  if (!match) return "https://bsky.app";
+  return `https://bsky.app/profile/${match[1]}/post/${match[2]}`;
+}
+
+const postUrl = postUri ? atUriToBskyUrl(postUri) : undefined;
+---
+
+<bluesky-comments-wrapper
+  data-uri={postUri}
+  data-urls={urls?.length ? JSON.stringify(urls) : undefined}
+  data-author-did={authorDid}
+>
+  <section class="bluesky-comments-section">
+    <h2 class="section-title">Comments</h2>
+    <p class="bluesky-comments-cta">
+      Reply on
+      <a
+        href={postUrl ?? "https://bsky.app"}
+        class="bluesky-comments-link link-highlight"
+        target="_blank"
+        rel="noopener noreferrer">Bluesky</a
+      >
+      to join the conversation.
+    </p>
+    <div class="bluesky-comments-loading">
+      <p class="text-muted-foreground font-mono text-sm">Loading comments...</p>
+    </div>
+    <div class="bluesky-comments-error hidden">
+      <p class="text-muted-foreground font-mono text-sm">
+        Failed to load comments.
+      </p>
+    </div>
+    <div class="bluesky-comments-container hidden"></div>
+    <p
+      class="bluesky-comments-empty hidden text-muted-foreground font-mono text-sm"
+    >
+      No comments yet. Be the first to reply!
+    </p>
+  </section>
+</bluesky-comments-wrapper>
+
+<script>
+  import "bluesky-comments-tag/load";
+
+  const BSKY_API = "https://public.api.bsky.app/xrpc";
+
+  class BlueskyCommentsWrapper extends HTMLElement {
+    connectedCallback() {
+      const uri = this.dataset.uri;
+      if (uri) {
+        this.#showComments(uri);
+        return;
+      }
+
+      const urlsJson = this.dataset.urls;
+      const authorDid = this.dataset.authorDid;
+      if (urlsJson && authorDid) {
+        const urls: string[] = JSON.parse(urlsJson);
+        this.#discoverAndLoad(urls, authorDid);
+      }
+    }
+
+    async #discoverAndLoad(urls: string[], authorDid: string) {
+      try {
+        const postUri = await this.#findEarliestPost(urls, authorDid);
+        if (postUri) {
+          this.#updateReplyLink(postUri);
+          this.#showComments(postUri);
+        } else {
+          this.querySelector(".bluesky-comments-loading")?.classList.add(
+            "hidden",
+          );
+          this.#showNoPostState();
+        }
+      } catch {
+        this.querySelector(".bluesky-comments-loading")?.classList.add(
+          "hidden",
+        );
+        this.querySelector(".bluesky-comments-error")?.classList.remove(
+          "hidden",
+        );
+      }
+    }
+
+    #showComments(atUri: string) {
+      const bskyUrl = this.#atUriToBskyUrl(atUri) ?? atUri;
+      const container = this.querySelector(".bluesky-comments-container");
+      const loadingEl = this.querySelector(".bluesky-comments-loading");
+
+      if (!container) return;
+
+      const commentsEl = document.createElement("bluesky-comments");
+      commentsEl.setAttribute("url", bskyUrl);
+      container.appendChild(commentsEl);
+
+      loadingEl?.classList.add("hidden");
+      container.classList.remove("hidden");
+    }
+
+    #atUriToBskyUrl(atUri: string): string | null {
+      const match = atUri.match(
+        /^at:\/\/(did:[^/]+)\/app\.bsky\.feed\.post\/(.+)$/,
+      );
+      if (!match) return null;
+      return `https://bsky.app/profile/${match[1]}/post/${match[2]}`;
+    }
+
+    async #findEarliestPost(
+      urls: string[],
+      authorDid: string,
+    ): Promise<string | null> {
+      const normalizedUrls = urls.map((u) => this.#normalizeUrl(u));
+      let cursor: string | undefined;
+      let earliest: { uri: string; createdAt: string } | null = null;
+
+      for (let page = 0; page < 10; page++) {
+        const params = new URLSearchParams({
+          actor: authorDid,
+          filter: "posts_no_replies",
+          limit: "100",
+        });
+        if (cursor) params.set("cursor", cursor);
+
+        const response = await fetch(
+          `${BSKY_API}/app.bsky.feed.getAuthorFeed?${params}`,
+        );
+        if (!response.ok) break;
+
+        const data = await response.json();
+        const feed = data.feed ?? [];
+        if (feed.length === 0) break;
+
+        for (const item of feed) {
+          const post = item.post;
+          if (!post || post.author?.did !== authorDid) continue;
+
+          const matchedUrl = this.#postMatchesUrls(post, normalizedUrls);
+          if (matchedUrl) {
+            const createdAt = (post.record as { createdAt?: string })
+              ?.createdAt;
+            if (createdAt && (!earliest || createdAt < earliest.createdAt)) {
+              earliest = { uri: post.uri, createdAt };
+            }
+          }
+        }
+
+        cursor = data.cursor;
+        if (!cursor) break;
+
+        if (earliest) {
+          const lastPost = feed[feed.length - 1]?.post;
+          const lastCreated = (lastPost?.record as { createdAt?: string })
+            ?.createdAt;
+          if (lastCreated && lastCreated < earliest.createdAt) break;
+        }
+      }
+
+      return earliest?.uri ?? null;
+    }
+
+    #postMatchesUrls(
+      post: { record: unknown; embed?: { external?: { uri?: string } } },
+      normalizedUrls: string[],
+    ): boolean {
+      const embedUri =
+        post.embed?.external?.uri ??
+        (post.record as { embed?: { external?: { uri?: string } } })?.embed
+          ?.external?.uri;
+      if (embedUri && normalizedUrls.includes(this.#normalizeUrl(embedUri))) {
+        return true;
+      }
+
+      const facets = (post.record as { facets?: Facet[] })?.facets ?? [];
+      for (const facet of facets) {
+        for (const feature of facet.features) {
+          if (
+            feature.$type === "app.bsky.richtext.facet#link" &&
+            feature.uri &&
+            normalizedUrls.includes(this.#normalizeUrl(feature.uri))
+          ) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    }
+
+    #normalizeUrl(url: string): string {
+      return url
+        .replace(/^https?:\/\//, "")
+        .replace(/\/+$/, "")
+        .toLowerCase();
+    }
+
+    #updateReplyLink(atUri: string) {
+      const bskyUrl = this.#atUriToBskyUrl(atUri);
+      if (!bskyUrl) return;
+      const link = this.querySelector(
+        ".bluesky-comments-link",
+      ) as HTMLAnchorElement | null;
+      if (link) link.href = bskyUrl;
+    }
+
+    #showNoPostState() {
+      const cta = this.querySelector(".bluesky-comments-cta");
+      if (cta) {
+        const urlsJson = this.dataset.urls;
+        const articleUrl = urlsJson ? JSON.parse(urlsJson)[0] : null;
+        if (articleUrl) {
+          const composeUrl = `https://bsky.app/intent/compose?text=${encodeURIComponent(articleUrl)}`;
+          cta.innerHTML = `Start the discussion — <a href="${composeUrl}" class="bluesky-comments-link link-highlight" target="_blank" rel="noopener noreferrer">post this article on Bluesky</a>.`;
+        } else {
+          cta.classList.add("hidden");
+        }
+      }
+      const empty = this.querySelector(".bluesky-comments-empty");
+      if (empty) {
+        empty.textContent =
+          "No Bluesky discussion yet. Comments will appear here once this post is shared on Bluesky.";
+        empty.classList.remove("hidden");
+      }
+    }
+  }
+
+  interface Facet {
+    index: { byteStart: number; byteEnd: number };
+    features: Array<{
+      $type: string;
+      uri?: string;
+      did?: string;
+    }>;
+  }
+
+  customElements.define("bluesky-comments-wrapper", BlueskyCommentsWrapper);
+</script>
+
+<style>
+  .bluesky-comments-section {
+    @apply mt-16 pt-8 border-t border-border;
+  }
+
+  .bluesky-comments-cta {
+    @apply text-muted-foreground font-mono text-sm mb-8;
+  }
+
+  .bluesky-comments-container {
+    @apply mt-4;
+  }
+
+  .hidden {
+    display: none;
+  }
+</style>
+
+<style is:global>
+  bluesky-comments {
+    --bluesky-font-family:
+      "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    --bluesky-font-size: 14px;
+    --bluesky-text-color: hsl(220 10% 98%);
+    --bluesky-handle-color: hsl(220 10% 70%);
+    --bluesky-footer-text-color: hsl(220 10% 60%);
+    --bluesky-bg-color: transparent;
+    --bluesky-hover-bg: hsl(230 15% 15%);
+    --bluesky-border-color: hsl(230 15% 20%);
+    --bluesky-spacing-xs: 4px;
+    --bluesky-spacing-sm: 8px;
+    --bluesky-spacing-md: 10px;
+    --bluesky-spacing-lg: 16px;
+    --bluesky-avatar-size: 32px;
+    --bluesky-avatar-bg: hsl(230 15% 25%);
+    --bluesky-reply-border-width: 2px;
+    --bluesky-footer-font-size: 13px;
+    --bluesky-icon-size: 16px;
+  }
+</style>

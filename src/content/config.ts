@@ -21,6 +21,7 @@ const articles = defineCollection({
           label: z.string(),
         })
         .optional(),
+      blueskyPostUri: z.string().optional(),
     }),
 });
 
