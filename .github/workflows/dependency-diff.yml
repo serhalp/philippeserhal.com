@@ -10,10 +10,14 @@ permissions:
 jobs:
   dependency-diff:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Create Diff
-        uses: e18e/action-dependency-diff@v1
+      - uses: e18e/action-dependency-diff@v1
+        with:
+          # Too noisy. Will enable if it ever supports reporting *changes* in duplicates.
+          duplicate-threshold: "999"
+          # Always report size diff.
+          size-threshold: "-1"
