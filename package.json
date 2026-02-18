@@ -11,6 +11,7 @@
     "format:check": "prettier --check .",
     "lint": "eslint --cache .",
     "lint:fix": "eslint --cache --fix .",
+    "knip": "knip",
     "preview": "astro preview",
     "test": "pnpm run format:check && pnpm run lint && astro check"
   },
@@ -38,6 +39,7 @@
     "eslint-plugin-react": "^7.34.0",
     "prettier": "^3.2.5",
     "prettier-plugin-astro": "^0.14.1",
+    "knip": "^5.83.1",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.32.1",
     "ultrahtml": "^1.6.0"
