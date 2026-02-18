@@ -8,10 +8,9 @@ import astroPlugin from "eslint-plugin-astro";
 import reactPlugin from "eslint-plugin-react";
 
 // @type {import('eslint').Linter.Config[]}
-export default tseslint.config(
+export default [
   eslint.configs.recommended,
-  tseslint.configs.recommended,
-  e18e.configs.recommended,
+  ...tseslint.configs.recommended,
   ...astroPlugin.configs.recommended,
   ...astroPlugin.configs["jsx-a11y-recommended"],
   {
@@ -44,4 +43,7 @@ export default tseslint.config(
       ".DS_Store",
     ],
   },
-);
+  // @ts-expect-error -- TODO(serhalp): Remove once https://github.com/e18e/eslint-plugin/issues/67
+  // is fixed.
+  e18e.configs.recommended,
+];
