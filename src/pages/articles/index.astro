@@ -1,14 +1,12 @@
 ---
-import { getCollection } from "astro:content";
-
 import Layout from "../../layouts/Layout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import RssIcon from "../../components/icons/RssIcon.astro";
+import ExternalLinkIcon from "../../components/icons/ExternalLinkIcon.astro";
+import { getWritingEntries } from "../../lib/writing";
 
-const articles = (await getCollection("articles")).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const articles = await getWritingEntries();
 
 const formatDate = (date: Date) => {
   return date.toLocaleDateString("en-US", {
@@ -40,7 +38,12 @@ const formatDate = (date: Date) => {
         {
           articles.map((article, i) => (
             <article class="group relative pl-6 border-l-2 border-border hover:border-primary transition-colors duration-300">
-              <a href={`/articles/${article.slug}`} class="block">
+              <a
+                href={article.href}
+                class="block"
+                target={article.isExternal ? "_blank" : undefined}
+                rel={article.isExternal ? "noreferrer" : undefined}
+              >
                 <div class="absolute -left-[9px] top-0 h-4 w-4 bg-background border-2 border-border group-hover:border-primary rounded-full transition-colors duration-300" />
 
                 <div class="flex flex-col gap-2 mb-3">
@@ -48,17 +51,23 @@ const formatDate = (date: Date) => {
                     <span class="font-mono text-primary text-sm font-bold mt-1.5">
                       [{i}]
                     </span>
-                    <h2 class="text-2xl font-bold group-hover:text-primary transition-colors">
-                      {article.data.title}
+                    <h2 class="text-2xl font-bold group-hover:text-primary transition-colors flex flex-wrap items-center gap-2">
+                      <span>{article.title}</span>
+                      {article.isExternal && article.externalLabel && (
+                        <span class="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-mono text-primary">
+                          {article.externalLabel}
+                        </span>
+                      )}
+                      {article.isExternal && <ExternalLinkIcon size={18} />}
                     </h2>
                   </div>
                   <time class="text-xs font-mono text-muted-foreground pl-0 md:pl-6">
-                    {formatDate(article.data.pubDate)}
+                    {formatDate(article.pubDate)}
                   </time>
                 </div>
 
                 <p class="text-muted-foreground mb-4 pl-0 md:pl-6 max-w-none leading-relaxed">
-                  {article.data.description}
+                  {article.description}
                 </p>
               </a>
             </article>

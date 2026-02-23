@@ -1,10 +1,10 @@
 ---
-import { getCollection } from "astro:content";
 import ExternalLinkIcon from "./icons/ExternalLinkIcon.astro";
 import RssIcon from "./icons/RssIcon.astro";
+import { getWritingEntries } from "../lib/writing";
 
-const articles = (await getCollection("articles"))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+const writingEntries = (await getWritingEntries())
+  .filter((entry) => !entry.isExternal)
   .slice(0, 3);
 
 const otherPublications = [
@@ -49,19 +49,25 @@ const formatDate = (date: Date) => {
         </div>
         <div class="space-y-6">
           {
-            articles.map((article) => (
+            writingEntries.map((entry) => (
               <div class="group">
-                <a href={`/articles/${article.slug}`} class="block">
+                <a
+                  href={entry.href}
+                  class="block"
+                  target={entry.isExternal ? "_blank" : undefined}
+                  rel={entry.isExternal ? "noreferrer" : undefined}
+                >
                   <div class="flex justify-between items-baseline mb-1">
-                    <h4 class="font-bold text-lg group-hover:text-primary transition-colors">
-                      {article.data.title}
+                    <h4 class="font-bold text-lg group-hover:text-primary transition-colors flex items-center gap-2">
+                      <span>{entry.title}</span>
+                      {entry.isExternal && <ExternalLinkIcon size={14} />}
                     </h4>
                     <span class="text-xs font-mono text-muted-foreground ml-2">
-                      {formatDate(article.data.pubDate)}
+                      {formatDate(entry.pubDate)}
                     </span>
                   </div>
                   <p class="text-sm text-muted-foreground line-clamp-2">
-                    {article.data.description}
+                    {entry.description}
                   </p>
                 </a>
               </div>

@@ -1,0 +1,9 @@
+{
+  "title": "ISR and advanced caching with Nuxt v4 on Netlify",
+  "pubDate": "2024-11-14",
+  "description": "Use ISR and advanced caching strategies with Nuxt v4 sites on Netlify.",
+  "external": {
+    "url": "https://developers.netlify.com/guides/isr-and-advanced-caching-with-nuxt-v4-on-netlify/",
+    "label": "Netlify Developers"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Run serverless functions, storage, and more in your Nuxt dev server with Netlify Nuxt",
+  "pubDate": "2025-07-15",
+  "description": "Use Netlify Nuxt to run serverless functions, storage, and other features in local Nuxt dev.",
+  "external": {
+    "url": "https://developers.netlify.com/guides/run-serverless-functions-storage-and-more-in-your-nuxt-dev-server-with-netlify-nuxt/",
+    "label": "Netlify Developers"
+  }
+}

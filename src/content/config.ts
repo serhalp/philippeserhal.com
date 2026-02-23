@@ -21,9 +21,24 @@ const articles = defineCollection({
           label: z.string(),
         })
         .optional(),
+      blueskyPostUri: z.string().optional(),
     }),
+});
+
+const externalArticles = defineCollection({
+  type: "data",
+  schema: z.object({
+    title: z.string(),
+    pubDate: z.coerce.date(),
+    description: z.string(),
+    external: z.object({
+      url: z.string().url(),
+      label: z.string(),
+    }),
+  }),
 });
 
 export const collections = {
   articles,
+  "external-articles": externalArticles,
 };

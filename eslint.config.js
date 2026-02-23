@@ -1,14 +1,16 @@
 // @ts-check
 
 import eslint from "@eslint/js";
+import e18e from "@e18e/eslint-plugin";
 import tseslint from "typescript-eslint";
 import astroPlugin from "eslint-plugin-astro";
+// eslint-disable-next-line e18e/ban-dependencies -- removing preact soon
 import reactPlugin from "eslint-plugin-react";
 
 // @type {import('eslint').Linter.Config[]}
-export default tseslint.config(
+export default [
   eslint.configs.recommended,
-  tseslint.configs.recommended,
+  ...tseslint.configs.recommended,
   ...astroPlugin.configs.recommended,
   ...astroPlugin.configs["jsx-a11y-recommended"],
   {
@@ -41,4 +43,7 @@ export default tseslint.config(
       ".DS_Store",
     ],
   },
-);
+  // @ts-expect-error -- TODO(serhalp): Remove once https://github.com/e18e/eslint-plugin/issues/67
+  // is fixed.
+  e18e.configs.recommended,
+];
