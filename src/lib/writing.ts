@@ -19,7 +19,7 @@ export const getWritingEntries = async (): Promise<WritingEntry[]> => {
     title: article.data.title,
     description: article.data.description,
     pubDate: article.data.pubDate,
-    href: `/articles/${article.slug}`,
+    href: `/articles/${article.id}`,
     isExternal: false,
     externalLabel: undefined,
   }));
