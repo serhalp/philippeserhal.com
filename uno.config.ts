@@ -1,10 +1,9 @@
 import { defineConfig } from "unocss";
-import presetWind3 from "@unocss/preset-wind3";
+import presetWind3, { type Theme } from "@unocss/preset-wind3";
 import presetTypography from "@unocss/preset-typography";
 import transformerDirectives from "@unocss/transformer-directives";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default defineConfig<any>({
+export default defineConfig<Theme>({
   presets: [
     presetWind3({
       dark: "class",
