@@ -1,9 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap");
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @layer base {
   :root {
     --background: 230 15% 10%;
@@ -76,15 +72,28 @@
   }
 
   .link-highlight {
-    @apply text-primary hover:text-accent transition-colors duration-200 underline underline-offset-4;
+    @apply text-primary transition-colors duration-200 underline underline-offset-4;
+  }
+
+  .link-highlight:hover {
+    @apply text-accent;
   }
 
   .project-card {
-    @apply bg-card p-6 rounded-lg border border-border transition-all duration-100 hover:border-primary hover:shadow-lg hover:shadow-primary/10;
+    @apply bg-card p-6 rounded-lg border border-border transition-all duration-100;
+  }
+
+  .project-card:hover {
+    @apply border-primary shadow-lg;
+    --un-shadow-color: hsl(var(--primary) / 0.1);
   }
 
   .social-icon {
-    @apply text-foreground hover:text-primary transition-colors duration-200;
+    @apply text-foreground transition-colors duration-200;
+  }
+
+  .social-icon:hover {
+    @apply text-primary;
   }
 
   .tag {
@@ -92,7 +101,11 @@
   }
 
   .nav-link {
-    @apply text-muted-foreground hover:text-foreground transition-colors duration-200 px-3 py-1 rounded-md hover:bg-secondary;
+    @apply text-muted-foreground transition-colors duration-200 px-3 py-1 rounded-md;
+  }
+
+  .nav-link:hover {
+    @apply text-foreground bg-secondary;
   }
 }
 

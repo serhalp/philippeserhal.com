@@ -18,14 +18,10 @@
   "dependencies": {
     "@astrojs/mdx": "5.0.0-beta.9",
     "@astrojs/preact": "5.0.0-beta.4",
-    "@astrojs/tailwind": "^6.0.2",
     "@preact/signals": "^2.8.1",
-    "@tailwindcss/typography": "^0.5.19",
     "astro": "6.0.0-beta.17",
     "bluesky-comments-tag": "^0.0.3",
-    "preact": "^10.24.3",
-    "tailwindcss": "3",
-    "tailwindcss-animate": "^1.0.7"
+    "preact": "^10.24.3"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.7-beta.1",
@@ -33,16 +29,22 @@
     "@astrojs/rss": "4.0.15-beta.4",
     "@e18e/eslint-plugin": "^0.2.0",
     "@eslint/js": "^9.27.0",
+    "@unocss/astro": "^66.6.2",
+    "@unocss/preset-typography": "^66.6.2",
+    "@unocss/preset-wind3": "^66.6.2",
+    "@unocss/reset": "^66.6.2",
+    "@unocss/transformer-directives": "^66.6.2",
     "eslint": "^9.27.0",
     "eslint-plugin-astro": "^1.3.1",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.34.0",
+    "knip": "^5.83.1",
     "prettier": "^3.2.5",
     "prettier-plugin-astro": "^0.14.1",
-    "knip": "^5.83.1",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.32.1",
-    "ultrahtml": "^1.6.0"
+    "ultrahtml": "^1.6.0",
+    "unocss": "^66.6.2"
   },
   "packageManager": "pnpm@9.15.9+sha512.68046141893c66fad01c079231128e9afb89ef87e2691d69e4d40eee228988295fd4682181bae55b58418c3a253bde65a505ec7c5f9403ece5cc3cd37dcf2531"
 }
