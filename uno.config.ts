@@ -119,8 +119,8 @@ export default defineConfig<any>({
         "cursor-blink": "step-start",
       },
       properties: {
-        "fade-in": { "fill-mode": "forwards" },
-        "slide-up": { "fill-mode": "forwards" },
+        "fade-in": { "animation-fill-mode": "forwards" },
+        "slide-up": { "animation-fill-mode": "forwards" },
       },
       counts: {
         "cursor-blink": "infinite",
