@@ -52,7 +52,7 @@ export async function GET(context: APIContext) {
       title: article.data.title,
       pubDate: article.data.pubDate,
       description: article.data.description,
-      link: `/articles/${article.slug}/`,
+      link: `/articles/${article.id}/`,
       content,
     });
   }
