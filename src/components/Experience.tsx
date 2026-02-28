@@ -108,7 +108,7 @@ const Experience = () => {
             ))}
           </div>
 
-          <div className="md:w-3/4 mr-32">
+          <div className="md:w-3/4 md:mr-32">
             {experienceData[activeTab.value] && (
               <div className="animate-fade-in">
                 <h3 className="text-xl font-bold pb-2">
