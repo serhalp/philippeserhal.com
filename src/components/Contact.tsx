@@ -6,25 +6,30 @@ const Contact = () => {
   const name = useSignal("");
   const email = useSignal("");
   const message = useSignal("");
+  const emailEntered = useSignal(false);
   const isSubmitted = useSignal(false);
   const formRef = useRef<HTMLFormElement>(null);
 
-  // Explicit state indicators
   const isEnteringName = !name.value;
-  const isEnteringEmail = !!name.value && !email.value;
-  const isEnteringMessage = !!name.value && email.value !== "";
+  const isEnteringEmail = !!name.value && !emailEntered.value;
+  const isEnteringMessage = !!name.value && emailEntered.value;
 
   const handleCommand = (value: string) => {
     if (isEnteringName) {
-      name.value = value;
+      if (value.trim()) {
+        name.value = value;
+      }
     } else if (isEnteringEmail) {
       email.value = value;
+      emailEntered.value = true;
     } else if (isEnteringMessage) {
-      message.value = value;
-      isSubmitted.value = true;
-      // Submit the actual Netlify form
-      if (formRef.current) {
-        formRef.current.submit();
+      if (value.trim()) {
+        message.value = value;
+        isSubmitted.value = true;
+        // Submit the actual Netlify form
+        if (formRef.current) {
+          formRef.current.submit();
+        }
       }
     }
   };

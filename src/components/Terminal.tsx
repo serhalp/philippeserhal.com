@@ -38,7 +38,7 @@ const Terminal = ({
 
   const handleSubmit = (e: Event) => {
     e.preventDefault();
-    if (onCommand && inputValue.value.trim()) {
+    if (onCommand) {
       onCommand(inputValue.value);
       inputValue.value = "";
     }
