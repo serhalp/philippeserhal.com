@@ -1,0 +1,97 @@
+---
+title: "OSS made me a better developer"
+pubDate: 2026-03-03
+description: "How getting involved in npmx made me a better developer"
+hidden: true
+---
+
+I recently got involved in an open-source project, [npmx](https://npmx.dev). This is the meandering story of how that made me a better developer.
+
+## It's never too late to start writing accessible code
+
+I started my career in 2007 at a Canadian government department responsible for web standards. As you can imagine, accessibility was a pillar. We tested websites (actually, there was a standard that mandated spelling it "Web site"; it still haunts me) on a dedicated computer in a closet that had [expensive assistive screen reading software](<https://en.wikipedia.org/wiki/JAWS_(screen_reader)>) installed, and we reported back to departments that didn't meet the bar. That bar was not very high back then. There was no WCAG 2.0 and no ARIA yet. [Gmail and Google Maps had just shown what was possible](https://web.archive.org/web/20150910072359/http://adaptivepath.org/ideas/ajax-new-approach-web-applications/) and the web had become a dynamic free-for-all with little concern for accessibility.
+
+Over the next couple decades, I did graduate research in computational biology, built internal apps for e-commerce fulfillment and delivery operations at a startup, led an internal developer productivity team, and maintained the build platform at Netlify, including all its framework integrations. All this time I wasn't closely touching production web development for large-scale, diverse audiences. Meanwhile, the capabilities of the web exploded and accessibility patterns evolved with it. I didn't go out of my way to keep up, neither professionally nor in my countless side projects.
+
+Then in early 2026 I joined a group of people building a modern web app for millions of users. They took accessibility as a given and simply put in the work. PRs weren't merged if they didn't meet the accessibility bar. I had to learn if I was going to contribute. I mean, I had to know what I was doing if I was going to be a _maintainer_, right?!
+
+So I just... learned. I browsed the codebase, learned the patterns, looked up attributes I wasn't familiar with, got feedback from the linter, from the automated Lighthouse audit and component accessibility tests. I asked Claude for an accessibility review before putting up each PR. I learned from PR review feedback, on my own PRs and on others'. I learned from our `#a11y` Discord channel.
+
+One month later, I'm far from an expert, but I've shifted a lot out of my "things I don't know I don't know" bucket; more than ever, with the ease of retrieving information, knowing _what_ to retrieve is what matters most.
+
+Now I'm going back to all my live side projects to set up a11y tooling and make them accessible to a more diverse audience. Because it's a given for _me_ now too. It isn't too late [for you either](https://www.w3.org/WAI/fundamentals/accessibility-intro/).
+
+## Internationalization is easy... with a community
+
+My internationalization journey follows a similar arc as above. At my Government of Canada job, all websites were required to be in English and French, the two official languages of Canada. The ColdFusion(!) server read from a Microsoft SQL Server 2005(!) table containing translated strings. Translations were updated by _manually writing and executing raw SQL queries ad hoc against the production database_(!). Nominally, the process had to go through a lengthy internal request process from some government translation department, even for a single word. In practice, as I was the only French speaker on the team and a junior programmer... it fell on me. (One time, I hit enter on my `UPDATE strings SET en = "something" fr = "quelque chose";` query before remembering to add the `WHERE key = "something"` clause... I'll never forget the monstrosity of a website that created.)
+
+Over the next 19 years, I never really encountered internationalization again. (Well, okay, as part of my job on the frameworks team at Netlify I do occasionally tear my hair out at the complexity wrought by Next.js's built-in i18n features.)
+
+It turns out internationalization hasn't changed all that much in two decades. You extract all user-facing strings somewhere, each mapped to a unique key with translations. You avoid making assumptions about the length of those strings or their direction... The hard part is staying organized, keeping track of what needs to be translated or re-translated, who can translate and review what, which strings are unused and can be cleaned up, and so on. Some of this can be solved with tooling and automation, while some of it is just humans working together. [Lunaria](https://lunaria.dev/) solved some of these problems for npmx.
+
+One month in, we support **28 locales**. It sort of just... happened, organically.
+
+As with accessibility, I now know that I know or know that I don't know a number of things that I previously didn't know that I didn't know about internationalization and localization. Nope, there was definitely no easier way to put that, I'm sorry.
+
+## Nuxt really shines with many contributors
+
+I wasn't new to [Nuxt](https://nuxt.com). It's my job at Netlify to know a dozen frameworks well. I built [`@netlify/nuxt`](https://npmx.dev/package/@netlify/nuxt) (with Daniel Roe!) and help maintain the Netlify Nitro presets. But building one-off demo apps, test fixtures, and small personal projects does not quite expose you to the same strengths and weaknesses of a framework as does collaborating with 200 contributors over just a few weeks.
+
+I knew this in theory, but seeing in practice how Nuxt's _highly_ opinionated, batteries-included conventions nudge all contributors toward a common [Pit of Success](https://learn.microsoft.com/en-us/archive/blogs/brada/the-pit-of-success) has been eye opening. It isn't a panacea, but much like automatic code formatting it avoids entire classes of [bikeshedding](https://bikeshed.com/) and lets everyone focus on shipping features. Two hundred new contributors, most of whom had never worked in Nuxt, were able to effectively contribute.
+
+## I was missing out on great tools
+
+There's something about OSS where they are always way ahead of the curve in terms of their own developer tools (don't be shy, I know you're still using jest and webpack at work). A greenfield OSS project that is _itself_ a developer tool, built by some of the brightest minds in the developer tooling space, is bound to be a goldmine. Here are just a few of those that stood out to me:
+
+- [knip](https://knip.dev): knip is incredible. If like me you'd used `npx knip` here and there for a one-off report, trust me, give it a fresh try—it's become _really_ good, has really cut down on false positives, and is highly configurable. Install it as a dev dependency in your projects, clean up the clutter, and run it automatically in CI from now on. Oh, and it now has IDE integrations, an LSP server, and an MCP server.
+- [e18e eslint plugin](https://npmx.dev/package/@e18e/eslint-plugin): The [e18e](https://e18e.dev/) crew are now in your linter. You can have your own little James Garbutt in your IDE calling out performance gotchas and bloated dependencies. Don't worry, eslint plugins now work with...
+- [oxlint](https://oxc.rs/docs/guide/usage/linter.html): Extremely fast, eslint-compatible linter. It's here. There's no need to wait any longer.
+- [oxfmt](https://oxc.rs/docs/guide/usage/formatter.html): Extremely fast, prettier-compatible formatter. It's now in beta and it works great. Hey, it's a _formatter_, you can afford to use a beta.
+- [vue-data-ui](https://vue-data-ui.graphieros.com/): Powerful, beautiful, [absurdly full featured and customizable](https://vue-data-ui.graphieros.com/customization) data visualization Vue library.
+- [unocss](https://unocss.dev/): Lightweight, portable highly customizable atomic utility CSS engine. Tailwind compatible.
+
+I'll be adding these and more to my toolbox.
+
+## You can just build what you wish existed
+
+Now more than ever, if there is something missing that software can solve for you, for your family, for your friends, for your employer, for your client, you ([yes, you](https://www.netlify.com/blog/you-are-now-a-developer/)) can just build it. If existing software isn't cutting it, you can just build your own. If existing software is funded by interests whose actions are fundamentally incompatible with your values, you can just build your own.
+
+In all these cases, you can go much, much farther by finding like-minded people and building together.
+
+> Hold fast to the one noble thing.
+>
+> — _Four Ways to Forgiveness_, Ursula K. Le Guinn (1995)
+
+## You can find your people again and again
+
+I've heard that a key to happiness and fulfillment is to _find your people_. I think that's incomplete: you have to _keep finding more people_; all sorts of people, across all the spheres of your multifaceted existence. Find the people who share your sense of humour. Find the people who share that weird, technical passion of yours, and those obsessed with that obscure fantasy author you love. Find the people who share your fundamental values (P.S.: really hold on to these most of all). It turns out there's quite a large and varied supply of _people_ out there, and you never know what might make them _yours_ after all.
+
+In npmx, I found people who _cared_ about a daily challenge they and others were facing, and _believed_ they could come together and... just build the solution—without putting others down, without monetization, with inclusivity in mind from the start, just building, building, building without borders. Devs already working on a solution to this? Join our team! You, you and you! Have ideas from another problem space that connect these two worlds? Oh hello, atproto land, Come on in! Leading expert on a11y passionate about making this a rich experience for all abilities? Yes please, teach us your ways. These are my people. They may be your people.
+
+> "Then you came here," she said.
+>
+> "Then I came here."
+>
+> "And learned?"
+>
+> "How to walk," he said. "How to walk with my people."
+>
+> — _A Man of the People (Four Ways to Forgiveness)_, Ursula K. Le Guinn (1995)
+
+## A few of my people
+
+- [Announcing npmx: a fast, modern browser for the npm registry](https://npmx.dev/blog/alpha-release) — npmx.dev
+- [**How to Make Your First Open Source Contribution**](https://whitep4nth3r.com/blog/how-to-make-your-first-open-source-contribution/) — whitep4nth3r.com — Getting involved in open source doesn't have to be scary! Understand how to find a great project and make your first contribution in this guide from Salma.
+- [**A Virtuous Circle**](https://roe.dev/blog/a-virtuous-cycle) — danielroe.dev — There's a reason why building npmx has been such a blast so far, and it's one of the most powerful patterns in open source software development. It's also why 'the 10x developer' is an incredibly dangerous myth.
+- [**vue-data-ui is on npmx npmx is on vue-data-ui**](https://graphieros.github.io/graphieros-blog/blog/2026/npmx.html) — graphieros.com — Graphieros explores a minimal npm-based workflow and why it exists.
+- [**The month. npmx**](https://www.alexdln.com/blog/npmx-the-month) — alexdln.com — Alex reflects on the project, warm stories, wonderful people, and a look into the future.
+- [**npmx: With a Little Help From My Friends**](https://johnnyreilly.com/npmx-with-a-little-help-from-my-friends) — johnnyreilly.com — How to contribute to npmx.dev, and thoughts on Johnny's experience with the project.
+- [**npmx: A Lesson in Open Source's Collaboration Feedback Loops**](https://opensourcepledge.com/blog/npmx-a-lesson-in-open-source-collaboration-feedback-loops/) — opensourcepledge.com — npmx's success is reminding us why Open Source is such a special social phenomenon.
+- [**Rising community at tomorrow's horizon**](https://blog.trueberryless.org/blog/npmx/) — trueberryless.org — Telling the story of a newly founded community.
+- [**Open source needs community. Community needs open source.**](https://conf.zurichjs.com/blog/open-source-needs-community) — zurichjs.com — Why ZurichJS cares about getting people into open source.
+- [**From a Bluesky post to my favorite open source community**](https://www.sybers.fr/blog/3mfhn5xoawz24) — sybers.fr — The best open source projects aren't just about great code. They're about the people behind them.
+- [**Storybook 💙 npmx**](https://storybook.js.org/blog/storybook-npmx) — storybook.js.org — We're huge fans of what the npmx community is building. Today's alpha is just the starting line, and we're proud to be running alongside them.
+- [**Open source, what's in it for me?**](https://jensroemer.com/writing/open-source-whats-in-it-for-me/) — jensroemer.com — Reflections on learning, community, and change.
+- [**VoidZero and npmx: Building Better Tools Together**](https://voidzero.dev/posts/npmx-alpha) — voidzero.dev — How VoidZero and npmx.dev share a vision for making JavaScript developers more productive, and how real-world feedback from open-source builders helps improve our tooling.
+- [**Community, Open Source, and npmx**](https://www.faziz-dev.com/blog/community-open-source-and-npmx) — farisaziz12.bsky.social — npmx isn't just an npm browser, it's a fast-moving open source train that welcomes you aboard the moment you show up.
+- [**Overcoming Imposter Syndrome: My First Open Source Contribution**](https://paulie.codes/blog/3mfs2stugzp2v) — paulie.codes — The most important part of open source is the people, and everyone has something valuable to bring to the table.

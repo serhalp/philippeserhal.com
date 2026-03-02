@@ -20,10 +20,10 @@ export async function GET(context: APIContext) {
   // Create a new Astro container that we can render components with.
   const container = await AstroContainer.create({ renderers });
 
-  // Load the articles collection.
-  const articles = (await getCollection("articles")).sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-  );
+  // Load the articles collection (exclude hidden from feed).
+  const articles = (await getCollection("articles"))
+    .filter((entry) => !entry.data.hidden)
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
   const feedItems = [];
   for (const article of articles) {
