@@ -14,15 +14,17 @@ export const getWritingEntries = async (): Promise<WritingEntry[]> => {
   const articles = await getCollection("articles");
   const externalArticles = await getCollection("external-articles");
 
-  const internalEntries = articles.map((article) => ({
-    id: article.id,
-    title: article.data.title,
-    description: article.data.description,
-    pubDate: article.data.pubDate,
-    href: `/articles/${article.id}`,
-    isExternal: false,
-    externalLabel: undefined,
-  }));
+  const internalEntries = articles
+    .filter((article) => !article.data.hidden)
+    .map((article) => ({
+      id: article.id,
+      title: article.data.title,
+      description: article.data.description,
+      pubDate: article.data.pubDate,
+      href: `/articles/${article.id}`,
+      isExternal: false,
+      externalLabel: undefined,
+    }));
 
   const externalEntries = externalArticles.map((entry) => ({
     id: entry.id,
