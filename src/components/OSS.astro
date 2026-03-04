@@ -1,0 +1,265 @@
+---
+import ExternalLinkIcon from "./icons/ExternalLinkIcon.astro";
+import FolderIcon from "./icons/FolderIcon.astro";
+import GitHubIcon from "./icons/GitHubIcon.astro";
+
+const ossData = [
+  {
+    title: "npmx",
+    description: "A fast, modern browser for the npm registry",
+    role: "maintainer" as const,
+    github: "https://github.com/npmx-dev/npmx.dev",
+    live: "https://npmx.dev",
+  },
+  {
+    title: "Gatsby",
+    description:
+      "React-based framework for building performant, static-first websites",
+    role: "maintainer" as const,
+    github: "https://github.com/gatsbyjs/gatsby",
+    npm: "gatsby",
+  },
+  {
+    title: "Netlify CLI",
+    description: "Command-line interface for the Netlify platform",
+    role: "maintainer" as const,
+    github: "https://github.com/netlify/cli",
+    npm: "netlify-cli",
+  },
+  {
+    title: "@netlify/build",
+    description: "The build system that powers Netlify deployments",
+    role: "maintainer" as const,
+    github: "https://github.com/netlify/build",
+    npm: "@netlify/build",
+  },
+  {
+    title: "OpenNext Netlify Adapter",
+    description: "Next.js adapter for Netlify, under the OpenNext umbrella",
+    role: "maintainer" as const,
+    github: "https://github.com/opennextjs/opennextjs-netlify",
+    npm: "@netlify/plugin-nextjs",
+  },
+  {
+    title: "Netlify Vite Plugin",
+    description:
+      "Vite plugin enabling full Netlify platform emulation in development",
+    role: "maintainer" as const,
+    github:
+      "https://github.com/netlify/primitives/tree/main/packages/vite-plugin",
+    npm: "@netlify/vite-plugin",
+  },
+  {
+    title: "Netlify TanStack Start Plugin",
+    description: "TanStack Start integration for Netlify",
+    role: "maintainer" as const,
+    github:
+      "https://github.com/netlify/primitives/tree/main/packages/vite-plugin-tanstack-start",
+    npm: "@netlify/vite-plugin-tanstack-start",
+  },
+  {
+    title: "Netlify Nuxt Module",
+    description:
+      "Nuxt module enabling full Netlify platform emulation in development",
+    role: "maintainer" as const,
+    github:
+      "https://github.com/netlify/primitives/tree/main/packages/nuxt-module",
+    npm: "@netlify/nuxt",
+  },
+  {
+    title: "Netlify React Router Plugin",
+    description: "React Router (Remix) integration for deploying to Netlify",
+    role: "maintainer" as const,
+    github:
+      "https://github.com/netlify/remix-compute/tree/main/packages/vite-plugin-react-router",
+    npm: "@netlify/vite-plugin-react-router",
+  },
+  {
+    title: "Netlify Angular Runtime",
+    description: "Angular build plugin for deploying to Netlify",
+    role: "maintainer" as const,
+    github: "https://github.com/netlify/angular-runtime",
+    npm: "@netlify/angular-runtime",
+  },
+  {
+    title: "SvelteKit Netlify Adapter",
+    description: "SvelteKit adapter for deploying to Netlify",
+    role: "contributor" as const,
+    github:
+      "https://github.com/sveltejs/kit/tree/master/packages/adapter-netlify",
+    npm: "@sveltejs/adapter-netlify",
+  },
+  {
+    title: "Nitro",
+    description: "Universal server engine powering Nuxt, Analog, and more",
+    role: "contributor" as const,
+    github: "https://github.com/unjs/nitro",
+    npm: "nitro",
+  },
+  {
+    title: "Astro Netlify Adapter",
+    description: "Astro adapter for Netlify",
+    role: "contributor" as const,
+    github:
+      "https://github.com/withastro/astro/tree/main/packages/integrations/netlify",
+    npm: "@astrojs/netlify",
+  },
+  {
+    title: "e18e",
+    description:
+      "Ecosystem performance initiative to clean up and speed up the JS ecosystem",
+    role: "contributor" as const,
+    github: "https://github.com/e18e/e18e",
+  },
+  {
+    title: "TanStack Start",
+    description: "Full-stack React framework built on TanStack Router",
+    role: "contributor" as const,
+    github: "https://github.com/TanStack/router",
+    npm: "@tanstack/start",
+  },
+  {
+    title: "Next.js",
+    description: "The React framework for the web",
+    role: "contributor" as const,
+    github: "https://github.com/vercel/next.js",
+    npm: "next",
+  },
+];
+
+const maintainerProjects = ossData.filter((p) => p.role === "maintainer");
+const contributorProjects = ossData.filter((p) => p.role === "contributor");
+
+const npmxUrl = (pkg: string) =>
+  `https://www.npmx.dev/package/${encodeURIComponent(pkg)}`;
+---
+
+<section id="oss" class="py-20">
+  <div class="container">
+    <h2 class="section-title">OSS</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+      <div>
+        <h3
+          class="text-xl font-mono font-bold text-primary flex items-center mb-6"
+        >
+          <span class="mr-2">#</span> Maintainer
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {
+            maintainerProjects.map((project) => (
+              <div class="project-card flex flex-col">
+                <div class="flex justify-between items-start mb-4">
+                  <div class="text-primary">
+                    <FolderIcon size={32} />
+                  </div>
+                  <div class="flex gap-3">
+                    {project.github ? (
+                      <a
+                        href={project.github}
+                        target="_blank"
+                        class="social-icon"
+                        aria-label={`GitHub repository for ${project.title}`}
+                      >
+                        <GitHubIcon size={18} />
+                      </a>
+                    ) : null}
+                    {project.npm ? (
+                      <a
+                        href={npmxUrl(project.npm)}
+                        target="_blank"
+                        class="social-icon"
+                        aria-label={`npmx page for ${project.title}`}
+                      >
+                        <img
+                          src="/npmx-logo.svg"
+                          alt="npmx"
+                          width="18"
+                          height="18"
+                        />
+                      </a>
+                    ) : null}
+                    {project.live ? (
+                      <a
+                        href={project.live}
+                        target="_blank"
+                        class="social-icon"
+                        aria-label={`Live website for ${project.title}`}
+                      >
+                        <ExternalLinkIcon size={18} />
+                      </a>
+                    ) : null}
+                  </div>
+                </div>
+                <h3 class="text-sm font-mono font-bold mb-2">
+                  <a href={project.github} target="_blank">
+                    {project.title}
+                  </a>
+                </h3>
+                <p class="text-xs text-muted-foreground">
+                  {project.description}
+                </p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <div>
+        <h3
+          class="text-xl font-mono font-bold text-primary flex items-center mb-6"
+        >
+          <span class="mr-2">#</span> Contributor
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {
+            contributorProjects.map((project) => (
+              <div class="project-card flex flex-col">
+                <div class="flex justify-between items-start mb-4">
+                  <div class="text-primary">
+                    <FolderIcon size={32} />
+                  </div>
+                  <div class="flex gap-3">
+                    {project.github ? (
+                      <a
+                        href={project.github}
+                        target="_blank"
+                        class="social-icon"
+                        aria-label={`GitHub repository for ${project.title}`}
+                      >
+                        <GitHubIcon size={18} />
+                      </a>
+                    ) : null}
+                    {project.npm ? (
+                      <a
+                        href={npmxUrl(project.npm)}
+                        target="_blank"
+                        class="social-icon"
+                        aria-label={`npmx page for ${project.title}`}
+                      >
+                        <img
+                          src="/npmx-logo.svg"
+                          alt="npmx"
+                          width="18"
+                          height="18"
+                        />
+                      </a>
+                    ) : null}
+                  </div>
+                </div>
+                <h3 class="text-sm font-mono font-bold mb-2">
+                  <a href={project.github} target="_blank">
+                    {project.title}
+                  </a>
+                </h3>
+                <p class="text-xs text-muted-foreground">
+                  {project.description}
+                </p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
