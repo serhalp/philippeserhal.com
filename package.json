@@ -19,13 +19,13 @@
     "@astrojs/mdx": "5.0.0",
     "@astrojs/preact": "5.0.0",
     "@preact/signals": "^2.8.1",
-    "astro": "6.0.2",
+    "astro": "6.0.4",
     "bluesky-comments-tag": "^0.0.3",
     "preact": "^10.24.3"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.7",
-    "@astrojs/netlify": "7.0.1",
+    "@astrojs/netlify": "7.0.2",
     "@astrojs/rss": "4.0.17",
     "@e18e/eslint-plugin": "^0.2.0",
     "@eslint/js": "^9.27.0",
