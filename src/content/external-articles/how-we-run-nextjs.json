@@ -1,0 +1,9 @@
+{
+  "title": "How we run Next.js today — and what should change",
+  "pubDate": "2025-03-26",
+  "description": "Discover the 6 key challenges platforms face when supporting Next.js deployments, including the lack of adapter support and undocumented behaviors. Learn how Netlify is working with OpenNext to build a more collaborative future for the open source Next.js framework.",
+  "external": {
+    "url": "https://www.netlify.com/blog/how-we-run-nextjs/",
+    "label": "Netlify Blog"
+  }
+}
