@@ -19,7 +19,7 @@
     "@astrojs/mdx": "5.0.3",
     "@astrojs/preact": "5.1.0",
     "@preact/signals": "^2.8.1",
-    "astro": "6.1.1",
+    "astro": "6.1.6",
     "bluesky-comments-tag": "^0.0.3",
     "preact": "^10.24.3"
   },
