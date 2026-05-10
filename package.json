@@ -1,11 +1,12 @@
 {
   "name": "philippeserhal.com",
-  "type": "module",
   "version": "0.0.0",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "astro:check": "astro check",
     "build": "astro build",
+    "build:prod": "sequoia publish && pnpm run build && sequoia inject",
     "dev": "astro dev",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -41,6 +42,7 @@
     "knip": "^6.0.0",
     "prettier": "^3.2.5",
     "prettier-plugin-astro": "^0.14.1",
+    "sequoia-cli": "0.5.6",
     "typescript": "^6.0.0",
     "typescript-eslint": "^8.32.1",
     "ultrahtml": "^1.6.0",
