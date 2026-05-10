@@ -1,4 +1,5 @@
-import { defineCollection, z } from "astro:content";
+import { defineCollection } from "astro:content";
+import { z } from "astro/zod";
 import { glob } from "astro/loaders";
 
 const articles = defineCollection({
@@ -41,7 +42,7 @@ const externalArticles = defineCollection({
     pubDate: z.coerce.date(),
     description: z.string(),
     external: z.object({
-      url: z.string().url(),
+      url: z.url(),
       label: z.string(),
     }),
   }),
