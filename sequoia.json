@@ -1,0 +1,19 @@
+{
+  "$schema": "https://tangled.org/stevedylan.dev/sequoia/raw/main/sequoia.schema.json",
+  "siteUrl": "https://philippeserhal.com",
+  "contentDir": "src/content/articles",
+  "outputDir": "./dist",
+  "pathPrefix": "/articles",
+  "publicationUri": "at://did:plc:5wdnwfs45bghuedlj3rdmani/site.standard.publication/3mlhl2smu532q",
+  "removeIndexFromSlug": true,
+  "publishContent": false,
+  "autoSync": true,
+  "frontmatter": {
+    "publishDate": "pubDate",
+    "coverImage": "sequoiaCoverImage",
+    "draft": "hidden"
+  },
+  "bluesky": {
+    "enabled": false
+  }
+}
