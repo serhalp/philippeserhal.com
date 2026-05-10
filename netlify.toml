@@ -2,6 +2,9 @@
   command = "pnpm run build"
   publish = "dist"
 
+[context.production]
+  command = "pnpm run build:prod"
+
 [dev]
   command = "pnpm run dev"
   port = 4321

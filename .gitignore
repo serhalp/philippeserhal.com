@@ -16,6 +16,7 @@
 
 # cache files
 /.eslintcache
+/.sequoia-state.json
 
 # Local Netlify folder
 /.netlify

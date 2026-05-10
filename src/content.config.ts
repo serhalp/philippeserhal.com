@@ -25,6 +25,7 @@ const articles = defineCollection({
           label: z.string(),
         })
         .optional(),
+      atUri: z.string().optional(),
       blueskyPostUri: z.string().optional(),
       hidden: z.boolean().optional(),
     }),
