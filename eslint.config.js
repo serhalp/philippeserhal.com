@@ -43,7 +43,5 @@ export default [
       ".DS_Store",
     ],
   },
-  // @ts-expect-error -- TODO(serhalp): Remove once https://github.com/e18e/eslint-plugin/issues/67
-  // is fixed.
   e18e.configs.recommended,
 ];
