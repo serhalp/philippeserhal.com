@@ -7,3 +7,12 @@ minimumReleaseAge: 1080 # 18 hours
 blockExoticSubdeps: true
 trustPolicy: no-downgrade
 trustPolicyIgnoreAfter: 64800 # 18 hours
+trustPolicyExclude:
+  - "@netlify/edge-bundler@14.10.3"
+  - "@netlify/serverless-functions-api@2.16.0"
+  - "@netlify/zip-it-and-ship-it@14.7.1"
+  - "@preact/signals@2.9.1"
+minimumReleaseAgeExclude:
+  - "@astrojs/mdx@7.0.0-beta.2"
+  - "@astrojs/netlify@8.0.0-beta.1"
+  - "@astrojs/preact@6.0.0-beta.1"
