@@ -1,6 +1,6 @@
 import { useSignal } from "@preact/signals";
 import { useRef } from "preact/hooks";
-import Terminal from "./Terminal";
+import ContactTerminal from "./ContactTerminal";
 
 const Contact = () => {
   const name = useSignal("");
@@ -52,7 +52,7 @@ const Contact = () => {
           <input type="text" name="message" value={message.value} readOnly />
         </form>
 
-        <Terminal
+        <ContactTerminal
           command="sendmail"
           output={
             <>

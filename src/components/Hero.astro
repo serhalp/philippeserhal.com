@@ -1,0 +1,56 @@
+---
+import Terminal from "./Terminal.astro";
+---
+
+<section class="py-16">
+  <div class="container">
+    <div class="animate-fade-in opacity-0" style="animation-delay: 0.2s">
+      <Terminal command="whois serhalp" showCursor={false}>
+        <p>Full name: <span class="font-bold">Philippe Serhal</span></p>
+        <p>Location: <span class="font-bold">Montréal, QC, Canada</span></p>
+        <p>Role: <span class="font-bold">Staff Software Engineer</span></p>
+        <p>Company: <span class="font-bold">Netlify</span></p>
+        <p>
+          Team: <span class="font-bold"
+            >Front-end Frameworks & Build System</span
+          >
+        </p>
+      </Terminal>
+    </div>
+
+    <h1
+      class="text-5xl md:text-7xl font-bold mt-3 mb-4 animate-fade-in opacity-0"
+      style="animation-delay: 0.4s"
+    >
+      Philippe Serhal
+    </h1>
+
+    <h2
+      class="text-3xl md:text-5xl font-bold text-muted-foreground mb-8 animate-fade-in opacity-0"
+      style="animation-delay: 0.6s"
+    >
+      I make computers solve problems.
+    </h2>
+
+    <div
+      class="max-w-5xl animate-fade-in opacity-0"
+      style="animation-delay: 0.8s"
+    >
+      <p class="text-lg text-foreground mb-4">
+        I like to <strong>build</strong> things. I like to <strong>fix</strong>{
+          " "
+        }things. I <strong>really</strong> like to solve problems.
+      </p>
+      <p class="text-lg text-foreground mb-4">
+        I <strong>love to deeply, truly understand</strong> things.
+      </p>
+      <p class="text-lg text-foreground mb-4">
+        I currently work as a Staff Engineer on the team responsible for the
+        build & deploy system at{" "}
+        <a href="https://netlify.com" class="link-highlight">Netlify</a>, where
+        millions of sites are developed, built, and deployed—with dozens of
+        different tech stacks.
+      </p>
+    </div>
+  </div>
+</section>

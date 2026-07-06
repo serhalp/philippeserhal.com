@@ -2,7 +2,7 @@ import type { ComponentChildren } from "preact";
 import { useSignal } from "@preact/signals";
 import { useRef } from "preact/hooks";
 
-interface TerminalProps {
+interface ContactTerminalProps {
   command?: string;
   output?: ComponentChildren;
   title?: string;
@@ -15,7 +15,7 @@ interface TerminalProps {
   inputPlaceholder?: string;
 }
 
-const Terminal = ({
+const ContactTerminal = ({
   command = "",
   output,
   title = "bash",
@@ -26,7 +26,7 @@ const Terminal = ({
   isInput = false,
   inputName,
   inputPlaceholder = "",
-}: TerminalProps) => {
+}: ContactTerminalProps) => {
   const inputValue = useSignal("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -90,4 +90,4 @@ const Terminal = ({
   );
 };
 
-export default Terminal;
+export default ContactTerminal;
