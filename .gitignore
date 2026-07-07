@@ -21,5 +21,12 @@
 # Local Netlify folder
 /.netlify
 
+# Local Playwright CLI artifacts
+/.playwright-cli/
+
+# Playwright test artifacts
+/playwright-report/
+/test-results/
+
 # macOS-specific files
 .DS_Store

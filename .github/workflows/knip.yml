@@ -1,21 +1,23 @@
 name: Knip
 
-on: [push, pull_request]
+on:
+  pull_request:
 
 jobs:
   knip:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
 
     steps:
       - uses: actions/checkout@v7
+
+      - name: Set up PNPM
+        uses: pnpm/action-setup@008330803749db0355799c700092d9a85fd074e9 # v6.0.9
 
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 24.x
-
-      - name: Set up PNPM
-        run: corepack enable
+          cache: pnpm
 
       - name: Install dependencies
         run: "pnpm install"
