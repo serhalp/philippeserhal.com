@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   homepage:
-    runs-on: ubuntu-arm
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 15
 
     steps:
