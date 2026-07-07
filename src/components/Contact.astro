@@ -1,0 +1,300 @@
+---
+import Terminal from "./Terminal.astro";
+---
+
+<section id="contact" class="py-20 bg-secondary/20">
+  <div class="container max-w-2xl text-center">
+    <h2 class="section-title justify-center">Get In Touch</h2>
+
+    <Terminal command="sendmail" showCursor={false}>
+      <form
+        name="contact"
+        method="POST"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        class="text-left"
+        data-contact-form
+      >
+        <input type="hidden" name="form-name" value="contact" />
+        <p class="hidden">
+          <label>
+            Do not fill this out:
+            <input name="bot-field" autocomplete="off" tabindex="-1" />
+          </label>
+        </p>
+
+        <div class="mb-6" aria-live="polite">
+          <p>Connecting to mail server...</p>
+          <p>Connected.</p>
+        </div>
+
+        <div class="space-y-5" data-contact-fields>
+          <label class="block">
+            <span class="block text-muted-foreground">Enter your name:</span>
+            <input
+              id="contact-name"
+              type="text"
+              name="name"
+              autocomplete="name"
+              required
+              class="mt-1 w-full bg-transparent border-0 border-b border-muted px-0 py-2 text-foreground outline-none transition-colors focus:border-primary"
+            />
+          </label>
+
+          <label class="block">
+            <span class="block text-muted-foreground"
+              >Enter your email (optional):</span
+            >
+            <input
+              id="contact-email"
+              type="email"
+              name="email"
+              autocomplete="email"
+              class="mt-1 w-full bg-transparent border-0 border-b border-muted px-0 py-2 text-foreground outline-none transition-colors focus:border-primary"
+            />
+          </label>
+
+          <label class="block">
+            <span class="block text-muted-foreground">Enter your message:</span>
+            <textarea
+              id="contact-message"
+              name="message"
+              required
+              rows="4"
+              class="mt-1 min-h-28 w-full resize-y bg-transparent border-0 border-b border-muted px-0 py-2 text-foreground outline-none transition-colors focus:border-primary"
+            ></textarea>
+          </label>
+
+          <button
+            type="submit"
+            class="inline-flex items-center border border-primary px-4 py-2 font-mono text-primary transition-colors hover:bg-primary hover:text-primary-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-terminal"
+          >
+            sendmail
+          </button>
+        </div>
+
+        <div hidden aria-live="polite" data-contact-terminal>
+          <div data-contact-transcript></div>
+          <div class="mt-2" data-contact-prompt-row>
+            <label
+              for="contact-command"
+              class="block text-muted-foreground"
+              data-contact-prompt-label>Enter your name:</label
+            >
+            <div class="flex items-center">
+              <span class="text-primary" aria-hidden="true">&gt;</span>
+              <input
+                id="contact-command"
+                type="text"
+                autocomplete="off"
+                class="ml-2 w-full bg-transparent border-none outline-none text-foreground font-mono"
+                data-contact-command
+              />
+            </div>
+          </div>
+        </div>
+      </form>
+    </Terminal>
+  </div>
+</section>
+
+<script>
+  const forms = document.querySelectorAll<HTMLFormElement>(
+    "[data-contact-form]",
+  );
+
+  for (const form of forms) {
+    const fields = form.querySelector<HTMLElement>("[data-contact-fields]");
+    const terminal = form.querySelector<HTMLElement>("[data-contact-terminal]");
+    const transcript = form.querySelector<HTMLElement>(
+      "[data-contact-transcript]",
+    );
+    const commandInput = form.querySelector<HTMLInputElement>(
+      "[data-contact-command]",
+    );
+    const promptLabel = form.querySelector<HTMLElement>(
+      "[data-contact-prompt-label]",
+    );
+    const promptRow = form.querySelector<HTMLElement>(
+      "[data-contact-prompt-row]",
+    );
+
+    const nameInput = form.elements.namedItem("name");
+    const emailInput = form.elements.namedItem("email");
+    const messageInput = form.elements.namedItem("message");
+
+    if (
+      !fields ||
+      !terminal ||
+      !transcript ||
+      !commandInput ||
+      !promptLabel ||
+      !promptRow ||
+      !(nameInput instanceof HTMLInputElement) ||
+      !(emailInput instanceof HTMLInputElement) ||
+      !(messageInput instanceof HTMLTextAreaElement)
+    ) {
+      continue;
+    }
+
+    const steps = [
+      {
+        field: nameInput,
+        prompt: "Enter your name:",
+        type: "text",
+        required: true,
+      },
+      {
+        field: emailInput,
+        prompt: "Enter your email (optional):",
+        type: "email",
+        required: false,
+      },
+      {
+        field: messageInput,
+        prompt: "Enter your message:",
+        type: "text",
+        required: true,
+      },
+    ];
+
+    let stepIndex = 0;
+    let readyToSubmit = false;
+
+    const appendLine = (text: string, className = "") => {
+      const line = document.createElement("p");
+      line.textContent = text;
+      if (className) {
+        line.className = className;
+      }
+      transcript.append(line);
+    };
+
+    const encodeFormData = (formData: FormData) => {
+      const params = new URLSearchParams();
+
+      for (const [key, value] of formData) {
+        if (typeof value === "string") {
+          params.append(key, value);
+        }
+      }
+
+      return params.toString();
+    };
+
+    const syncPrompt = (shouldFocus = true) => {
+      const step = steps[stepIndex];
+
+      promptLabel.textContent = step.prompt;
+      commandInput.type = step.type;
+      commandInput.required = step.required;
+      commandInput.value = "";
+      commandInput.setCustomValidity("");
+      commandInput.setAttribute("aria-label", step.prompt);
+      if (shouldFocus) {
+        commandInput.focus();
+      }
+    };
+
+    const syncRetryPrompt = () => {
+      promptLabel.textContent = "Press Enter to retry:";
+      commandInput.type = "text";
+      commandInput.required = false;
+      commandInput.value = "";
+      commandInput.setCustomValidity("");
+      commandInput.setAttribute("aria-label", "Press Enter to retry:");
+      commandInput.disabled = false;
+      commandInput.focus();
+    };
+
+    const submitForm = async () => {
+      appendLine("Sending...", "text-muted-foreground");
+
+      for (const step of steps) {
+        step.field.disabled = false;
+      }
+      const formData = new FormData(form);
+      for (const step of steps) {
+        step.field.disabled = true;
+      }
+
+      form.dataset.submitting = "true";
+      commandInput.disabled = true;
+
+      try {
+        const response = await fetch(form.getAttribute("action") || "/", {
+          method: form.method || "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: encodeFormData(formData),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Contact form submission failed: ${response.status}`);
+        }
+
+        form.dataset.sent = "true";
+        readyToSubmit = false;
+        appendLine("Mail delivered. Thank you.", "text-primary");
+        promptRow.hidden = true;
+      } catch (err) {
+        console.error("Failed to send email", err);
+        form.dataset.submitting = "false";
+        appendLine("Delivery failed. Please try again.", "text-destructive");
+        readyToSubmit = true;
+        syncRetryPrompt();
+      }
+    };
+
+    form.dataset.enhanced = "true";
+    fields.hidden = true;
+    terminal.hidden = false;
+    for (const step of steps) {
+      step.field.disabled = true;
+    }
+    syncPrompt(false);
+
+    form.addEventListener("submit", (event) => {
+      if (form.dataset.submitting === "true") {
+        event.preventDefault();
+        return;
+      }
+
+      event.preventDefault();
+
+      if (readyToSubmit) {
+        void submitForm();
+        return;
+      }
+
+      const step = steps[stepIndex];
+      const value = commandInput.value.trim();
+
+      commandInput.setCustomValidity("");
+      if (step.required && !value) {
+        commandInput.setCustomValidity("Please enter a value.");
+      }
+      if (!commandInput.reportValidity()) {
+        return;
+      }
+
+      step.field.value = value;
+      appendLine(step.prompt, "text-muted-foreground");
+      appendLine(value || "(blank)");
+
+      stepIndex += 1;
+      if (stepIndex < steps.length) {
+        syncPrompt();
+        return;
+      }
+
+      readyToSubmit = true;
+      void submitForm();
+    });
+
+    terminal.addEventListener("click", () => {
+      commandInput.focus();
+    });
+  }
+</script>
