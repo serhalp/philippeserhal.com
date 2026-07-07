@@ -35,24 +35,23 @@ test("renders the homepage and primary navigation", async ({ page }) => {
   ).toHaveAttribute("href", "/articles");
 });
 
-test("hydrates the experience tabs", async ({ page }) => {
+test("enhances the experience links", async ({ page }) => {
   await page.goto("/");
 
   await expect(
     page.getByRole("heading", { name: netlifyExperienceHeadingPattern }),
   ).toBeVisible();
 
-  const goodEggsTab = page.getByRole("button", { name: goodEggsTabPattern });
+  const goodEggsTab = page.getByRole("link", { name: goodEggsTabPattern });
   const goodEggsHeading = page.getByRole("heading", {
     name: goodEggsExperienceHeadingPattern,
   });
 
-  await expect
-    .poll(async () => {
-      await goodEggsTab.click();
-      return goodEggsHeading.isVisible();
-    })
-    .toBe(true);
+  await expect(goodEggsHeading).toBeHidden();
+
+  await goodEggsTab.click();
+
+  await expect(goodEggsHeading).toBeVisible();
 });
 
 test("enhances the contact form into a terminal flow", async ({ page }) => {
