@@ -14,7 +14,8 @@
     "lint:fix": "eslint --cache --fix .",
     "knip": "knip",
     "preview": "astro preview",
-    "test": "pnpm run format:check && pnpm run lint && astro check"
+    "test": "pnpm run format:check && pnpm run lint && pnpm run astro:check && pnpm run test:e2e",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@astrojs/mdx": "7.0.2",
@@ -30,6 +31,7 @@
     "@astrojs/rss": "4.0.19",
     "@e18e/eslint-plugin": "^0.5.0",
     "@eslint/js": "^10.0.0",
+    "@playwright/test": "^1.61.1",
     "@unocss/astro": "^66.6.2",
     "@unocss/preset-typography": "^66.6.2",
     "@unocss/preset-wind3": "^66.6.2",
