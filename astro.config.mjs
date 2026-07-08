@@ -1,7 +1,6 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import netlify from "@astrojs/netlify";
-import preact from "@astrojs/preact";
 import UnoCSS from "unocss/astro";
 import mdx from "@astrojs/mdx";
 
@@ -18,5 +17,5 @@ export default defineConfig({
     },
   },
 
-  integrations: [UnoCSS({ injectReset: true }), preact(), mdx()],
+  integrations: [UnoCSS({ injectReset: true }), mdx()],
 });
