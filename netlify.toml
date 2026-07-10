@@ -8,3 +8,8 @@
 [dev]
   command = "pnpm run dev"
   port = 4321
+
+[[redirects]]
+  from = "/rss.xml"
+  to = "https://standard-reader.app/feed/p/did%3Aplc%3A5wdnwfs45bghuedlj3rdmani/3mlhl2smu532q"
+  status = 301
