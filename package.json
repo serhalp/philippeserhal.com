@@ -34,7 +34,7 @@
     "@unocss/reset": "^66.6.2",
     "@unocss/transformer-directives": "^66.6.2",
     "eslint": "^10.0.0",
-    "eslint-plugin-astro": "^2.0.0",
+    "eslint-plugin-astro": "^3.0.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "knip": "^6.0.0",
     "prettier": "^3.2.5",
