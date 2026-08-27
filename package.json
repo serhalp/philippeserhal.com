@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@astrojs/mdx": "7.0.8",
-    "astro": "7.2.7",
+    "astro": "7.2.8",
     "bluesky-comments-tag": "^0.0.3"
   },
   "devDependencies": {
