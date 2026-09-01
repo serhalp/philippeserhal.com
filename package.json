@@ -19,12 +19,12 @@
   },
   "dependencies": {
     "@astrojs/mdx": "7.0.8",
-    "astro": "7.2.9",
+    "astro": "7.2.10",
     "bluesky-comments-tag": "^0.0.3"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
-    "@astrojs/netlify": "8.2.4",
+    "@astrojs/netlify": "8.2.5",
     "@e18e/eslint-plugin": "^0.8.0",
     "@eslint/js": "^10.0.0",
     "@playwright/test": "^1.61.1",
