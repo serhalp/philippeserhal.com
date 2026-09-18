@@ -26,7 +26,7 @@ importers:
         version: 8.2.6(@types/node@25.9.3)(astro@7.3.3(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.3)(@netlify/blobs@10.7.9(supports-color@7.2.0))(@types/node@25.9.3)(jiti@2.7.0)(yaml@2.9.0))(jiti@2.7.0)(srvx@1.0.3)(supports-color@7.2.0)(yaml@2.9.0)
       '@e18e/eslint-plugin':
         specifier: ^0.8.0
-        version: 0.8.0(eslint@10.10.0(jiti@2.7.0)(supports-color@7.2.0))
+        version: 0.8.1(eslint@10.10.0(jiti@2.7.0)(supports-color@7.2.0))
       '@eslint/js':
         specifier: ^10.0.0
         version: 10.0.1(eslint@10.10.0(jiti@2.7.0)(supports-color@7.2.0))
@@ -453,8 +453,8 @@ packages:
     resolution: {integrity: sha512-v6oD9Ukp+N7V4n6p5I/+mM5fIohSfkrDSGlFm5w/pYmchvbk+sMIHsLxrFJ5Lnujewj1BzWL0K84d88lwZAMQA==}
     engines: {node: '>=18'}
 
-  '@e18e/eslint-plugin@0.8.0':
-    resolution: {integrity: sha512-js/TeM+XJyoJ2Zk4if5uTEchv3MEbqugc9gLgq8YdB6Dy+LvwGACpQiAwcul0r4LUl0TvhuzAKUeIUPtGp2cew==}
+  '@e18e/eslint-plugin@0.8.1':
+    resolution: {integrity: sha512-OV3T7l0r52/IglskdAuoO+BJyzsCs7AcIHpwpBMlIMO0+3RHskM2h5MuHdLuesIhSRhwCURGMKtp/XwnfXrfxg==}
     peerDependencies:
       eslint: ^9.0.0 || ^10.0.0
       oxlint: ^1.72.0
@@ -4361,8 +4361,8 @@ packages:
   module-details-from-path@1.0.4:
     resolution: {integrity: sha512-EGWKgxALGMgzvxYF1UyGTy0HXX/2vHLkw6+NvDKW2jypWbHpjQuj4UMcqQWXHERJhVGKikolT06G3bcKe4fi7w==}
 
-  module-replacements@3.1.0:
-    resolution: {integrity: sha512-MSTNGqlp2q0seRlrAA/FK3SUkGnmPeexeKWuCjeJ7HobD2RCjk4f8ry8lJ+nUQFDVBAHSdC4TdjyJSaocnR7Uw==}
+  module-replacements@3.3.0:
+    resolution: {integrity: sha512-AVZL23uePazQOZlb/QMGwxsUa1oWA62Cfe6ApPzgasUoF4cdCWAiRPVq4KkaQzXbIDAlpLhLG61Jx8Lju4wjTg==}
 
   mrmime@2.0.1:
     resolution: {integrity: sha512-Y3wQdFg2Va6etvQ5I82yUhGdsKrcYox6p7FfL1LbK2J4V01F9TGlepTIhnK24t7koZibmg82KGglhA1XK5IsLQ==}
@@ -6384,11 +6384,11 @@ snapshots:
       gonzales-pe: 4.3.0
       node-source-walk: 7.0.2
 
-  '@e18e/eslint-plugin@0.8.0(eslint@10.10.0(jiti@2.7.0)(supports-color@7.2.0))':
+  '@e18e/eslint-plugin@0.8.1(eslint@10.10.0(jiti@2.7.0)(supports-color@7.2.0))':
     dependencies:
       empathic: 2.0.1
-      module-replacements: 3.1.0
-      semver: 7.8.5
+      module-replacements: 3.3.0
+      verkit: 0.4.0
     optionalDependencies:
       eslint: 10.10.0(jiti@2.7.0)(supports-color@7.2.0)
 
@@ -10848,7 +10848,7 @@ snapshots:
 
   module-details-from-path@1.0.4: {}
 
-  module-replacements@3.1.0: {}
+  module-replacements@3.3.0: {}
 
   mrmime@2.0.1: {}
 
