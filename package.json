@@ -38,7 +38,7 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "knip": "^6.0.0",
     "prettier": "^3.2.5",
-    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-astro": "^1.0.0",
     "sequoia-cli": "0.5.7",
     "typescript": "^6.0.0",
     "typescript-eslint": "^8.32.1",
