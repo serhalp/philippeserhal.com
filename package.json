@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
-    "@astrojs/netlify": "8.2.9",
+    "@astrojs/netlify": "8.2.10",
     "@e18e/eslint-plugin": "^0.8.0",
     "@eslint/js": "^10.0.0",
     "@playwright/test": "^1.61.1",
